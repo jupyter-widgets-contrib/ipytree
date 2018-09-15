@@ -62,6 +62,7 @@ var NodeView = widgets.WidgetView.extend({
         this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
         this.nodeViews.update(this.model.get('nodes'));
 
+        this.model.on('change:name', _.bind(this.handleNameChange, this));
         this.model.on('change:nodes', _.bind(this.handleNodesChange, this));
     },
 
@@ -74,6 +75,13 @@ var NodeView = widgets.WidgetView.extend({
 
     removeNodeView: function(nodeView) {
         nodeView.remove();
+    },
+
+    handleNameChange: function() {
+        $(this.treeView.el).jstree(true).rename_node(
+            this.model.get('_id'),
+            this.model.get('name')
+        );
     },
 
     handleNodesChange: function() {

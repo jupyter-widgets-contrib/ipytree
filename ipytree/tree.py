@@ -1,5 +1,5 @@
 from ipywidgets import register, Widget, DOMWidget, widget_serialization
-from traitlets import Unicode, Tuple, Instance, default
+from traitlets import Unicode, Tuple, Instance, default, TraitError
 import uuid
 
 
@@ -28,6 +28,8 @@ class Node(Widget):
 
     def add_node(self, node, position="last"):
         # TODO position ?
+        if not isinstance(node, Node):
+            raise TraitError('The added node must be a Node instance')
         self.nodes = tuple([n for n in self.nodes] + [node])
 
     def remove_node(self):
@@ -50,6 +52,8 @@ class Tree(DOMWidget):
 
     def add_node(self, node, position="last"):
         # TODO position ?
+        if not isinstance(node, Node):
+            raise TraitError('The added node must be a Node instance')
         self.nodes = tuple([n for n in self.nodes] + [node])
 
     def remove_node(self):

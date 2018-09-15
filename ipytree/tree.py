@@ -20,7 +20,7 @@ class Node(Widget):
     name = Unicode("Node").tag(sync=True)
     nodes = Tuple(trait=Instance(Widget)).tag(sync=True, **widget_serialization)
 
-    _id = Unicode().tag(sync=True)
+    _id = Unicode(read_only=True).tag(sync=True)
 
     @default('_id')
     def _default_id(self):
@@ -48,7 +48,7 @@ class Tree(DOMWidget):
 
     nodes = Tuple(trait=Instance(Node)).tag(sync=True, **widget_serialization)
 
-    _id = Unicode('#').tag(sync=True)
+    _id = Unicode('#', read_only=True).tag(sync=True)
 
     def add_node(self, node, position="last"):
         # TODO position ?

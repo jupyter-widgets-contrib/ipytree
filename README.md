@@ -1,16 +1,10 @@
 ipytree
-===============================
+=======
 
-A Tree Widget using jsTree
+A Tree Widget using Jupyter-widgets protocol and [jsTree](https://www.jstree.com/)
 
 Installation
 ------------
-
-To install use pip:
-
-    $ pip install ipytree
-    $ jupyter nbextension enable --py --sys-prefix ipytree
-
 
 For a development installation (requires npm),
 

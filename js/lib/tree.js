@@ -136,7 +136,10 @@ var TreeView = widgets.DOMWidgetView.extend({
             $(this.el).jstree({
                 'core': {
                     'check_callback': true
-                }
+                },
+                'plugins': [
+                    'wholerow'
+                ]
             }).on('ready.jstree', () => {
                 this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
                 this.nodeViews.update(this.model.get('nodes'));

@@ -20,7 +20,9 @@ var NodeModel = widgets.WidgetModel.extend({
         _model_module_version: '0.1.0',
         _view_module_version: '0.1.0',
         name: 'Node',
-        icon: 'file',
+        opened: true,
+        disabled: false,
+        selected: false,
         icon: 'folder',
         icon_color: 'silver',
         nodes: [],
@@ -46,17 +48,23 @@ var NodeView = widgets.WidgetView.extend({
         this.treeView = this.options.treeView;
 
         this.treeView.waitTree.then(() => {
+            this.tree = $(this.treeView.el).jstree(true);
             this.renderNode();
         });
     },
 
     renderNode: function() {
-        $(this.treeView.el).jstree(true).create_node(
+        this.tree.create_node(
             this.parentModel.get('_id'),
             {
-                'id': this.model.get('_id'),
-                'text': this.model.get('name'),
-                'icon': this.getIcon()
+                id: this.model.get('_id'),
+                text: this.model.get('name'),
+                icon: this.getIcon(),
+                state: {
+                    opened: this.model.get('opened'),
+                    disabled: this.model.get('disabled'),
+                    selected: this.model.get('selected')
+                }
             },
             'last',
             _.bind(this.onRendered, this)
@@ -77,6 +85,9 @@ var NodeView = widgets.WidgetView.extend({
         this.nodeViews.update(this.model.get('nodes'));
 
         this.model.on('change:name', _.bind(this.handleNameChange, this));
+        this.model.on('change:opened', _.bind(this.handleOpenedChange, this));
+        this.model.on('change:disabled', _.bind(this.handleDisabledChange, this));
+        this.model.on('change:selected', _.bind(this.handleSelectedChange, this));
         this.model.on('change:icon', _.bind(this.handleIconChange, this));
         this.model.on('change:icon_color', _.bind(this.handleIconChange, this));
         this.model.on('change:nodes', _.bind(this.handleNodesChange, this));
@@ -90,22 +101,40 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     removeNodeView: function(nodeView) {
+        // TODO remove the node from the tree
         nodeView.remove();
     },
 
     handleNameChange: function() {
-        $(this.treeView.el).jstree(true).rename_node(
-            this.model.get('_id'),
-            this.model.get('name')
-        );
+        this.tree.rename_node(this.model.get('_id'), this.model.get('name'));
+    },
+
+    handleOpenedChange: function() {
+        if(this.model.get('opened')) {
+            this.tree.open_node(this.model.get('_id'));
+        } else {
+            this.tree.close_node(this.model.get('_id'));
+        }
+    },
+
+    handleDisabledChange: function() {
+        if(this.model.get('disabled')) {
+            this.tree.disable_node(this.model.get('_id'));
+        } else {
+            this.tree.enable_node(this.model.get('_id'));
+        }
+    },
+
+    handleSelectedChange: function() {
+        if(this.model.get('selected')) {
+            this.tree.select_node(this.model.get('_id'));
+        } else {
+            this.tree.deselect_node(this.model.get('_id'));
+        }
     },
 
     handleIconChange: function() {
-        var icon = this.getIcon();
-        $(this.treeView.el).jstree(true).set_icon(
-            this.model.get('_id'),
-            icon
-        );
+        this.tree.set_icon(this.model.get('_id'), this.getIcon());
     },
 
     handleNodesChange: function() {

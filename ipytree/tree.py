@@ -1,5 +1,8 @@
 from ipywidgets import register, Widget, DOMWidget, widget_serialization
-from traitlets import Unicode, Enum, Tuple, Instance, default, TraitError
+from traitlets import (
+    default, TraitError,
+    Bool, Unicode, Enum, Tuple, Instance
+)
 import uuid
 
 
@@ -18,7 +21,9 @@ class Node(Widget):
     _model_module_version = Unicode('^0.1.0').tag(sync=True)
 
     name = Unicode("Node").tag(sync=True)
-    icon = Unicode("file").tag(sync=True)
+    opened = Bool(True).tag(sync=True)
+    disabled = Bool(False).tag(sync=True)
+    selected = Bool(False).tag(sync=True)
     icon = Unicode("folder").tag(sync=True)
     icon_color = Enum([
         "navy", "blue", "aqua", "teal", "olive", "green", "lime", "yellow",

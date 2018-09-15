@@ -176,6 +176,28 @@ var TreeView = widgets.DOMWidgetView.extend({
 
                 this.model.on('change:nodes', _.bind(this.handleNodesChange, this));
 
+                $(this.el).bind(
+                    "select_node.jstree", (evt, data) => {
+                        nodesRegistry[data.node.id].set('selected', true);
+                    }
+                ).bind(
+                    "deselect_node.jstree", (evt, data) => {
+                        nodesRegistry[data.node.id].set('selected', false);
+                    }
+                ).bind(
+                    "select_all.jstree", (evt, data) => {
+                        for(var id in nodesRegistry) {
+                            nodesRegistry[id].set('selected', true);
+                        }
+                    }
+                ).bind(
+                    "deselect_all.jstree", (evt, data) => {
+                        for(var id in nodesRegistry) {
+                            nodesRegistry[id].set('selected', false);
+                        }
+                    }
+                );
+
                 resolve();
             });
         });

@@ -5,6 +5,7 @@ require('jstree/dist/themes/default/32px.png');
 require('jstree/dist/themes/default/40px.png');
 require('jstree/dist/themes/default/throbber.gif');
 require('jstree/dist/themes/default/style.css');
+require('./tree.css');
 // require('jstree/dist/themes/default-dark/style.css');
 require('jstree');
 
@@ -19,6 +20,8 @@ var NodeModel = widgets.WidgetModel.extend({
         _model_module_version: '0.1.0',
         _view_module_version: '0.1.0',
         name: 'Node',
+        icon: 'file',
+        icon_color: 'silver',
         nodes: [],
         _id: '',
     }),
@@ -51,11 +54,21 @@ var NodeView = widgets.WidgetView.extend({
             this.parentModel.get('_id'),
             {
                 'id': this.model.get('_id'),
-                'text': this.model.get('name')
+                'text': this.model.get('name'),
+                'icon': this.getIcon()
             },
             'last',
             _.bind(this.onRendered, this)
         );
+    },
+
+    getIcon: function() {
+        var icon = this.model.get('icon');
+        if(!icon.includes('/')) {
+            icon = 'fa fa-' + icon + ' ipytree-color-' + this.model.get('icon_color');
+        }
+
+        return icon;
     },
 
     onRendered: function() {
@@ -63,6 +76,8 @@ var NodeView = widgets.WidgetView.extend({
         this.nodeViews.update(this.model.get('nodes'));
 
         this.model.on('change:name', _.bind(this.handleNameChange, this));
+        this.model.on('change:icon', _.bind(this.handleIconChange, this));
+        this.model.on('change:icon_color', _.bind(this.handleIconChange, this));
         this.model.on('change:nodes', _.bind(this.handleNodesChange, this));
     },
 
@@ -81,6 +96,14 @@ var NodeView = widgets.WidgetView.extend({
         $(this.treeView.el).jstree(true).rename_node(
             this.model.get('_id'),
             this.model.get('name')
+        );
+    },
+
+    handleIconChange: function() {
+        var icon = this.getIcon();
+        $(this.treeView.el).jstree(true).set_icon(
+            this.model.get('_id'),
+            icon
         );
     },
 

@@ -1,5 +1,5 @@
 from ipywidgets import register, Widget, DOMWidget, widget_serialization
-from traitlets import Unicode, Tuple, Instance, default, TraitError
+from traitlets import Unicode, Enum, Tuple, Instance, default, TraitError
 import uuid
 
 
@@ -18,6 +18,12 @@ class Node(Widget):
     _model_module_version = Unicode('^0.1.0').tag(sync=True)
 
     name = Unicode("Node").tag(sync=True)
+    icon = Unicode("file").tag(sync=True)
+    icon_color = Enum([
+        "navy", "blue", "aqua", "teal", "olive", "green", "lime", "yellow",
+        "orange", "red", "fuchsia", "purple", "maroon", "white",
+        "silver", "gray", "black"
+    ], default_value="silver").tag(sync=True)
     nodes = Tuple(trait=Instance(Widget)).tag(sync=True, **widget_serialization)
 
     _id = Unicode(read_only=True).tag(sync=True)

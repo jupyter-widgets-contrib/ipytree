@@ -21,6 +21,7 @@ var NodeModel = widgets.WidgetModel.extend({
         _view_module_version: '0.1.0',
         name: 'Node',
         icon: 'file',
+        icon: 'folder',
         icon_color: 'silver',
         nodes: [],
         _id: '',

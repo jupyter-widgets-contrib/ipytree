@@ -19,6 +19,7 @@ class Node(Widget):
 
     name = Unicode("Node").tag(sync=True)
     icon = Unicode("file").tag(sync=True)
+    icon = Unicode("folder").tag(sync=True)
     icon_color = Enum([
         "navy", "blue", "aqua", "teal", "olive", "green", "lime", "yellow",
         "orange", "red", "fuchsia", "purple", "maroon", "white",

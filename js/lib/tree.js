@@ -196,6 +196,14 @@ var TreeView = widgets.DOMWidgetView.extend({
                             nodesRegistry[id].set('selected', false);
                         }
                     }
+                ).bind(
+                    "before_open.jstree", (evt, data) => {
+                        nodesRegistry[data.node.id].set('opened', true);
+                    }
+                ).bind(
+                    "close_node.jstree", (evt, data) => {
+                        nodesRegistry[data.node.id].set('opened', false);
+                    }
                 );
 
                 resolve();

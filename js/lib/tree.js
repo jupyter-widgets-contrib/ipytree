@@ -6,7 +6,7 @@ require('jstree/dist/themes/default/40px.png');
 require('jstree/dist/themes/default/throbber.gif');
 require('jstree/dist/themes/default/style.css');
 require('./tree.css');
-// require('jstree/dist/themes/default-dark/style.css');
+require('jstree/dist/themes/default-dark/style.css');
 require('jstree');
 
 var nodesRegistry = {};
@@ -180,6 +180,9 @@ var TreeModel = widgets.DOMWidgetModel.extend({
         _model_module_version: '0.1.0',
         _view_module_version: '0.1.0',
         nodes: [],
+        theme: 'default',
+        stripes: false,
+        multiple_selection: true,
         _id: '#'
     })
 }, {
@@ -193,7 +196,12 @@ var TreeView = widgets.DOMWidgetView.extend({
         this.waitTree = new Promise((resolve, reject) => {
             $(this.el).jstree({
                 'core': {
-                    check_callback: true
+                    check_callback: true,
+                    multiple: this.model.get('multiple_selection'),
+                    themes: {
+                        name: this.model.get('theme'),
+                        stripes: this.model.get('stripes'),
+                    }
                 },
                 'plugins': [
                     'wholerow'

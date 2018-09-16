@@ -65,8 +65,22 @@ class Tree(DOMWidget):
     _model_module_version = Unicode('^0.1.0').tag(sync=True)
 
     nodes = Tuple(trait=Instance(Node)).tag(sync=True, **widget_serialization)
+    theme = Unicode('default', read_only=True).tag(sync=True)
+    stripes = Bool(False, read_only=True).tag(sync=True)
+    multiple_selection = Bool(True, read_only=True).tag(sync=True)
 
     _id = Unicode('#', read_only=True).tag(sync=True)
+
+    def __init__(
+            self, nodes=[], theme='default', stripes=False,
+            multiple_selection=True,
+            **kwargs):
+        super(Tree, self).__init__(**kwargs)
+
+        self.nodes = nodes
+        self.set_trait('theme', theme)
+        self.set_trait('stripes', stripes)
+        self.set_trait('multiple_selection', multiple_selection)
 
     def add_node(self, node, position="last"):
         # TODO position ?

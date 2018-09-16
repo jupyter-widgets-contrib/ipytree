@@ -171,7 +171,7 @@ var TreeView = widgets.DOMWidgetView.extend({
         this.waitTree = new Promise((resolve, reject) => {
             $(this.el).jstree({
                 'core': {
-                    'check_callback': true
+                    check_callback: true
                 },
                 'plugins': [
                     'wholerow'
@@ -201,13 +201,17 @@ var TreeView = widgets.DOMWidgetView.extend({
         ).bind(
             "select_all.jstree", (evt, data) => {
                 for(var id in nodesRegistry) {
-                    nodesRegistry[id].set('selected', true);
+                    if($(this.el).jstree(true).get_node(id)) {
+                        nodesRegistry[id].set('selected', true);
+                    }
                 }
             }
         ).bind(
             "deselect_all.jstree", (evt, data) => {
                 for(var id in nodesRegistry) {
-                    nodesRegistry[id].set('selected', false);
+                    if($(this.el).jstree(true).get_node(id)) {
+                        nodesRegistry[id].set('selected', false);
+                    }
                 }
             }
         ).bind(

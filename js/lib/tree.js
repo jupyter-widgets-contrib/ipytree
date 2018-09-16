@@ -23,6 +23,7 @@ var NodeModel = widgets.WidgetModel.extend({
         opened: true,
         disabled: false,
         selected: false,
+        show_icon: true,
         icon: 'folder',
         icon_color: 'silver',
         nodes: [],
@@ -72,6 +73,10 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     getIcon: function() {
+        if(!this.model.get('show_icon')) {
+            return false;
+        }
+
         var icon = this.model.get('icon');
         if(!icon.includes('/')) {
             icon = 'fa fa-' + icon + ' ipytree-color-' + this.model.get('icon_color');
@@ -88,6 +93,7 @@ var NodeView = widgets.WidgetView.extend({
         this.model.on('change:opened', _.bind(this.handleOpenedChange, this));
         this.model.on('change:disabled', _.bind(this.handleDisabledChange, this));
         this.model.on('change:selected', _.bind(this.handleSelectedChange, this));
+        this.model.on('change:show_icon', _.bind(this.handleIconChange, this));
         this.model.on('change:icon', _.bind(this.handleIconChange, this));
         this.model.on('change:icon_color', _.bind(this.handleIconChange, this));
         this.model.on('change:nodes', _.bind(this.handleNodesChange, this));

@@ -24,6 +24,7 @@ class Node(Widget):
     opened = Bool(True).tag(sync=True)
     disabled = Bool(False).tag(sync=True)
     selected = Bool(False).tag(sync=True)
+    show_icon = Bool(True).tag(sync=True)
     icon = Unicode("folder").tag(sync=True)
     icon_color = Enum([
         "navy", "blue", "aqua", "teal", "olive", "green", "lime", "yellow",

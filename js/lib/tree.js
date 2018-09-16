@@ -88,26 +88,29 @@ var NodeView = widgets.WidgetView.extend({
     onRendered: function() {
         this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
         this.nodeViews.update(this.model.get('nodes'));
+        this.nodeViewList = [];
 
-        this.model.on('change:name', _.bind(this.handleNameChange, this));
-        this.model.on('change:opened', _.bind(this.handleOpenedChange, this));
-        this.model.on('change:disabled', _.bind(this.handleDisabledChange, this));
-        this.model.on('change:selected', _.bind(this.handleSelectedChange, this));
-        this.model.on('change:show_icon', _.bind(this.handleIconChange, this));
-        this.model.on('change:icon', _.bind(this.handleIconChange, this));
-        this.model.on('change:icon_color', _.bind(this.handleIconChange, this));
-        this.model.on('change:nodes', _.bind(this.handleNodesChange, this));
+        this.model.on('change:name', this.handleNameChange, this);
+        this.model.on('change:opened', this.handleOpenedChange, this);
+        this.model.on('change:disabled', this.handleDisabledChange, this);
+        this.model.on('change:selected', this.handleSelectedChange, this);
+        this.model.on('change:show_icon', this.handleIconChange, this);
+        this.model.on('change:icon', this.handleIconChange, this);
+        this.model.on('change:icon_color', this.handleIconChange, this);
+        this.model.on('change:nodes', this.handleNodesChange, this);
     },
 
     addNodeModel: function(nodeModel) {
         return this.create_child_view(nodeModel, {
             treeView: this.treeView,
             parentModel: this.model
+        }).then((view) => {
+            this.nodeViewList.push(view);
+            return view;
         });
     },
 
     removeNodeView: function(nodeView) {
-        // TODO remove the node from the tree
         nodeView.remove();
     },
 
@@ -146,6 +149,25 @@ var NodeView = widgets.WidgetView.extend({
     handleNodesChange: function() {
         this.nodeViews.update(this.model.get('nodes'));
     },
+
+    remove: function() {
+        NodeView.__super__.remove.apply(this, arguments);
+
+        this.nodeViewList.forEach((view) => {
+            view.remove();
+        });
+        this.tree.delete_node(this.model.get('_id'));
+
+        delete this.nodeView;
+        this.model.off('change:name', this.handleNameChange, this);
+        this.model.off('change:opened', this.handleOpenedChange, this);
+        this.model.off('change:disabled', this.handleDisabledChange, this);
+        this.model.off('change:selected', this.handleSelectedChange, this);
+        this.model.off('change:show_icon', this.handleIconChange, this);
+        this.model.off('change:icon', this.handleIconChange, this);
+        this.model.off('change:icon_color', this.handleIconChange, this);
+        this.model.off('change:nodes', this.handleNodesChange, this);
+    }
 });
 
 
@@ -177,10 +199,12 @@ var TreeView = widgets.DOMWidgetView.extend({
                     'wholerow'
                 ]
             }).on('ready.jstree', () => {
+                this.tree = $(this.el).jstree(true);
+
                 this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
                 this.nodeViews.update(this.model.get('nodes'));
 
-                this.model.on('change:nodes', _.bind(this.handleNodesChange, this));
+                this.model.on('change:nodes', this.handleNodesChange, this);
 
                 this.initTreeEventListeners();
 
@@ -201,7 +225,7 @@ var TreeView = widgets.DOMWidgetView.extend({
         ).bind(
             "select_all.jstree", (evt, data) => {
                 for(var id in nodesRegistry) {
-                    if($(this.el).jstree(true).get_node(id)) {
+                    if(this.tree.get_node(id)) {
                         nodesRegistry[id].set('selected', true);
                     }
                 }
@@ -209,7 +233,7 @@ var TreeView = widgets.DOMWidgetView.extend({
         ).bind(
             "deselect_all.jstree", (evt, data) => {
                 for(var id in nodesRegistry) {
-                    if($(this.el).jstree(true).get_node(id)) {
+                    if(this.tree.get_node(id)) {
                         nodesRegistry[id].set('selected', false);
                     }
                 }
@@ -233,7 +257,6 @@ var TreeView = widgets.DOMWidgetView.extend({
     },
 
     removeNodeView: function(nodeView) {
-        // TODO Remove node from the tree
         nodeView.remove();
     },
 

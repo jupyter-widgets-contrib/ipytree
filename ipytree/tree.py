@@ -31,7 +31,8 @@ class Node(Widget):
         "orange", "red", "fuchsia", "purple", "maroon", "white",
         "silver", "gray", "black"
     ], default_value="silver").tag(sync=True)
-    nodes = Tuple(trait=Instance(Widget)).tag(sync=True, **widget_serialization)
+    nodes = Tuple(trait=Instance(Widget)).tag(
+        sync=True, **widget_serialization)
 
     _id = Unicode(read_only=True).tag(sync=True)
 
@@ -45,8 +46,12 @@ class Node(Widget):
             raise TraitError('The added node must be a Node instance')
         self.nodes = tuple([n for n in self.nodes] + [node])
 
-    def remove_node(self):
-        pass
+    def remove_node(self, node):
+        if node not in self.nodes:
+            raise RuntimeError(
+                '{} is not a children of {}'.format(node.name, self.name)
+            )
+        self.nodes = tuple([n for n in self.nodes if n._id != node._id])
 
 
 @register
@@ -69,5 +74,9 @@ class Tree(DOMWidget):
             raise TraitError('The added node must be a Node instance')
         self.nodes = tuple([n for n in self.nodes] + [node])
 
-    def remove_node(self):
-        pass
+    def remove_node(self, node):
+        if node not in self.nodes:
+            raise RuntimeError(
+                '{} is not a children of the tree'.format(node.name)
+            )
+        self.nodes = tuple([n for n in self.nodes if n._id != node._id])

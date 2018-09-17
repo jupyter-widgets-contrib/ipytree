@@ -40,11 +40,15 @@ class Node(Widget):
     def _default_id(self):
         return id_gen()
 
-    def add_node(self, node, position="last"):
-        # TODO position ?
+    def add_node(self, node, position=None):
         if not isinstance(node, Node):
             raise TraitError('The added node must be a Node instance')
-        self.nodes = tuple([n for n in self.nodes] + [node])
+
+        nodes = list(self.nodes)
+        if position is None or position > len(nodes):
+            position = len(nodes)
+        nodes.insert(position, node)
+        self.nodes = tuple(nodes)
 
     def remove_node(self, node):
         if node not in self.nodes:
@@ -82,11 +86,15 @@ class Tree(DOMWidget):
         self.set_trait('stripes', stripes)
         self.set_trait('multiple_selection', multiple_selection)
 
-    def add_node(self, node, position="last"):
-        # TODO position ?
+    def add_node(self, node, position=None):
         if not isinstance(node, Node):
             raise TraitError('The added node must be a Node instance')
-        self.nodes = tuple([n for n in self.nodes] + [node])
+
+        nodes = list(self.nodes)
+        if position is None or position > len(nodes):
+            position = len(nodes)
+        nodes.insert(position, node)
+        self.nodes = tuple(nodes)
 
     def remove_node(self, node):
         if node not in self.nodes:

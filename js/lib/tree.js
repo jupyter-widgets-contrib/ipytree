@@ -225,16 +225,19 @@ var TreeView = widgets.DOMWidgetView.extend({
         $(this.el).bind(
             "select_node.jstree", (evt, data) => {
                 nodesRegistry[data.node.id].set('selected', true);
+                nodesRegistry[data.node.id].save_changes();
             }
         ).bind(
             "deselect_node.jstree", (evt, data) => {
                 nodesRegistry[data.node.id].set('selected', false);
+                nodesRegistry[data.node.id].save_changes();
             }
         ).bind(
             "select_all.jstree", (evt, data) => {
                 for(var id in nodesRegistry) {
                     if(this.tree.get_node(id)) {
                         nodesRegistry[id].set('selected', true);
+                        nodesRegistry[id].save_changes();
                     }
                 }
             }
@@ -243,16 +246,19 @@ var TreeView = widgets.DOMWidgetView.extend({
                 for(var id in nodesRegistry) {
                     if(this.tree.get_node(id)) {
                         nodesRegistry[id].set('selected', false);
+                        nodesRegistry[id].save_changes();
                     }
                 }
             }
         ).bind(
             "before_open.jstree", (evt, data) => {
                 nodesRegistry[data.node.id].set('opened', true);
+                nodesRegistry[data.node.id].save_changes();
             }
         ).bind(
             "close_node.jstree", (evt, data) => {
                 nodesRegistry[data.node.id].set('opened', false);
+                nodesRegistry[data.node.id].save_changes();
             }
         );
     },

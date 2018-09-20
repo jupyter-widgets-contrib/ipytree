@@ -17,8 +17,8 @@ class Node(Widget):
     _model_name = Unicode('NodeModel').tag(sync=True)
     _view_module = Unicode('ipytree').tag(sync=True)
     _model_module = Unicode('ipytree').tag(sync=True)
-    _view_module_version = Unicode('^0.1.0').tag(sync=True)
-    _model_module_version = Unicode('^0.1.0').tag(sync=True)
+    _view_module_version = Unicode('^0.0.1').tag(sync=True)
+    _model_module_version = Unicode('^0.0.1').tag(sync=True)
 
     name = Unicode("Node").tag(sync=True)
     opened = Bool(True).tag(sync=True)
@@ -71,8 +71,8 @@ class Tree(DOMWidget):
     _model_name = Unicode('TreeModel').tag(sync=True)
     _view_module = Unicode('ipytree').tag(sync=True)
     _model_module = Unicode('ipytree').tag(sync=True)
-    _view_module_version = Unicode('^0.1.0').tag(sync=True)
-    _model_module_version = Unicode('^0.1.0').tag(sync=True)
+    _view_module_version = Unicode('^0.0.1').tag(sync=True)
+    _model_module_version = Unicode('^0.0.1').tag(sync=True)
 
     nodes = Tuple(trait=Instance(Node)).tag(sync=True, **widget_serialization)
     theme = Unicode('default', read_only=True).tag(sync=True)

@@ -20,17 +20,25 @@ class Node(Widget):
     _view_module_version = Unicode('^0.0.1').tag(sync=True)
     _model_module_version = Unicode('^0.0.1').tag(sync=True)
 
+    _style_values = [
+        "warning", "danger", "success", "info", "default"
+    ]
+
     name = Unicode("Node").tag(sync=True)
     opened = Bool(True).tag(sync=True)
     disabled = Bool(False).tag(sync=True)
     selected = Bool(False).tag(sync=True)
+
     show_icon = Bool(True).tag(sync=True)
     icon = Unicode("folder").tag(sync=True)
-    icon_color = Enum([
-        "navy", "blue", "aqua", "teal", "olive", "green", "lime", "yellow",
-        "orange", "red", "fuchsia", "purple", "maroon", "white",
-        "silver", "gray", "black"
-    ], default_value="silver").tag(sync=True)
+    icon_style = Enum(values=_style_values, default_value="default").tag(sync=True)
+
+    open_icon = Unicode("plus").tag(sync=True)
+    open_icon_style = Enum(values=_style_values, default_value="default").tag(sync=True)
+
+    close_icon = Unicode("minus").tag(sync=True)
+    close_icon_style = Enum(values=_style_values, default_value="default").tag(sync=True)
+
     nodes = Tuple(trait=Instance(Widget)).tag(
         sync=True, **widget_serialization)
 
@@ -75,21 +83,16 @@ class Tree(DOMWidget):
     _model_module_version = Unicode('^0.0.1').tag(sync=True)
 
     nodes = Tuple(trait=Instance(Node)).tag(sync=True, **widget_serialization)
-    theme = Unicode('default', read_only=True).tag(sync=True)
-    stripes = Bool(False, read_only=True).tag(sync=True)
     multiple_selection = Bool(True, read_only=True).tag(sync=True)
 
     _id = Unicode('#', read_only=True).tag(sync=True)
 
     def __init__(
-            self, nodes=[], theme='default', stripes=False,
-            multiple_selection=True,
+            self, nodes=[], multiple_selection=True,
             **kwargs):
         super(Tree, self).__init__(**kwargs)
 
         self.nodes = nodes
-        self.set_trait('theme', theme)
-        self.set_trait('stripes', stripes)
         self.set_trait('multiple_selection', multiple_selection)
 
     def add_node(self, node, position=None):

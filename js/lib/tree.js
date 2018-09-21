@@ -1,15 +1,17 @@
 var widgets = require('@jupyter-widgets/base');
 var _ = require('lodash');
 var $ = require('jquery');
-require('jstree/dist/themes/default/32px.png');
-require('jstree/dist/themes/default/40px.png');
-require('jstree/dist/themes/default/throbber.gif');
-require('jstree/dist/themes/default/style.css');
-require('./tree.css');
-require('jstree/dist/themes/default-dark/style.css');
+require('./theme/materialcolors.css');
+require('./theme/labvariables.css');
+require('./theme/style.css');
 require('jstree');
 
 var nodesRegistry = {};
+var triggerIconsUpdate = function() {
+    for(var id in nodesRegistry) {
+        nodesRegistry[id].trigger('icons_update');
+    }
+}
 
 var NodeModel = widgets.WidgetModel.extend({
     defaults: _.extend(widgets.WidgetModel.prototype.defaults(), {
@@ -25,7 +27,11 @@ var NodeModel = widgets.WidgetModel.extend({
         selected: false,
         show_icon: true,
         icon: 'folder',
-        icon_color: 'silver',
+        icon_style: 'default',
+        open_icon: 'plus',
+        open_icon_style: 'default',
+        close_icon: 'minus',
+        close_icon_style: 'default',
         nodes: [],
         _id: '',
     }),
@@ -78,11 +84,54 @@ var NodeView = widgets.WidgetView.extend({
         }
 
         var icon = this.model.get('icon');
-        if(!icon.includes('/')) {
-            icon = 'fa fa-' + icon + ' ipytree-color-' + this.model.get('icon_color');
-        }
+        icon = 'fa fa-' + icon + ' ipytree-style-' + this.model.get('icon_style');
 
         return icon;
+    },
+
+    getOpenIcon: function() {
+        var icon = this.model.get('open_icon');
+        icon = 'fa fa-' + icon + ' ipytree-style-' + this.model.get('open_icon_style');
+
+        return icon;
+    },
+
+    getCloseIcon: function() {
+        var icon = this.model.get('close_icon');
+        icon = 'fa fa-' + icon + ' ipytree-style-' + this.model.get('close_icon_style');
+
+        return icon;
+    },
+
+    getOpenCloseIconElement: function() {
+        return $(this.treeView.el).find('#' + this.model.get('_id'))
+            .find('i.jstree-icon.jstree-ocl').first();
+    },
+
+    setOpenCloseIcon: function() {
+        var open_icon = this.getOpenIcon();
+        var close_icon = this.getCloseIcon();
+        var icon_element = this.getOpenCloseIconElement();
+
+        if(this.model.get('nodes').length == 0) {
+            icon_element.removeClass(open_icon).removeClass(close_icon);
+            return;
+        }
+
+        if(icon_element.attr('class') != undefined) {
+            var class_list = icon_element.attr('class').split(/\s+/);
+            class_list.forEach((class_name) => {
+                if(class_name.includes('ipytree-style')) {
+                    icon_element.removeClass(class_name);
+                }
+            });
+        }
+
+        if(this.model.get('opened')) {
+            icon_element.removeClass(open_icon).addClass(close_icon);
+        } else {
+            icon_element.removeClass(close_icon).addClass(open_icon);
+        }
     },
 
     onRendered: function() {
@@ -90,14 +139,21 @@ var NodeView = widgets.WidgetView.extend({
         this.nodeViews.update(this.model.get('nodes'));
         this.nodeViewList = [];
 
-        this.model.on('change:name', this.handleNameChange, this);
-        this.model.on('change:opened', this.handleOpenedChange, this);
-        this.model.on('change:disabled', this.handleDisabledChange, this);
-        this.model.on('change:selected', this.handleSelectedChange, this);
-        this.model.on('change:show_icon', this.handleIconChange, this);
-        this.model.on('change:icon', this.handleIconChange, this);
-        this.model.on('change:icon_color', this.handleIconChange, this);
-        this.model.on('change:nodes', this.handleNodesChange, this);
+        this.listenTo(this.model, 'change:name', this.handleNameChange);
+        this.listenTo(this.model, 'change:opened', this.handleOpenedChange);
+        this.listenTo(this.model, 'change:disabled', this.handleDisabledChange);
+        this.listenTo(this.model, 'change:selected', this.handleSelectedChange);
+        this.listenTo(this.model, 'change:show_icon', this.handleIconChange);
+        this.listenTo(this.model, 'change:icon', this.handleIconChange);
+        this.listenTo(this.model, 'change:icon_style', this.handleIconChange);
+        this.listenTo(this.model, 'change:open_icon', this.setOpenCloseIcon);
+        this.listenTo(this.model, 'change:open_icon_style', this.setOpenCloseIcon);
+        this.listenTo(this.model, 'change:close_icon', this.setOpenCloseIcon);
+        this.listenTo(this.model, 'change:close_icon_style', this.setOpenCloseIcon);
+        this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
+        this.listenTo(this.model, 'icons_update', this.setOpenCloseIcon);
+
+        triggerIconsUpdate();
     },
 
     addNodeModel: function(nodeModel) {
@@ -119,6 +175,7 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     handleOpenedChange: function() {
+        triggerIconsUpdate();
         if(this.model.get('opened')) {
             this.tree.open_node(this.model.get('_id'));
         } else {
@@ -148,6 +205,7 @@ var NodeView = widgets.WidgetView.extend({
 
     handleNodesChange: function() {
         this.nodeViews.update(this.model.get('nodes'));
+        triggerIconsUpdate();
     },
 
     remove: function() {
@@ -159,14 +217,7 @@ var NodeView = widgets.WidgetView.extend({
         this.tree.delete_node(this.model.get('_id'));
 
         delete this.nodeView;
-        this.model.off('change:name', this.handleNameChange, this);
-        this.model.off('change:opened', this.handleOpenedChange, this);
-        this.model.off('change:disabled', this.handleDisabledChange, this);
-        this.model.off('change:selected', this.handleSelectedChange, this);
-        this.model.off('change:show_icon', this.handleIconChange, this);
-        this.model.off('change:icon', this.handleIconChange, this);
-        this.model.off('change:icon_color', this.handleIconChange, this);
-        this.model.off('change:nodes', this.handleNodesChange, this);
+        this.stopListening(this.model);
     }
 });
 
@@ -180,8 +231,6 @@ var TreeModel = widgets.DOMWidgetModel.extend({
         _model_module_version: '0.0.1',
         _view_module_version: '0.0.1',
         nodes: [],
-        theme: 'default',
-        stripes: false,
         multiple_selection: true,
         _id: '#'
     })
@@ -198,10 +247,6 @@ var TreeView = widgets.DOMWidgetView.extend({
                 'core': {
                     check_callback: true,
                     multiple: this.model.get('multiple_selection'),
-                    themes: {
-                        name: this.model.get('theme'),
-                        stripes: this.model.get('stripes'),
-                    }
                 },
                 'plugins': [
                     'wholerow'
@@ -212,7 +257,7 @@ var TreeView = widgets.DOMWidgetView.extend({
                 this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
                 this.nodeViews.update(this.model.get('nodes'));
 
-                this.model.on('change:nodes', this.handleNodesChange, this);
+                this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
 
                 this.initTreeEventListeners();
 
@@ -276,6 +321,10 @@ var TreeView = widgets.DOMWidgetView.extend({
 
     handleNodesChange: function() {
         this.nodeViews.update(this.model.get('nodes'));
+    },
+
+    remove: function() {
+        this.stopListening(this.model);
     },
 });
 

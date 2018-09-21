@@ -84,6 +84,7 @@ class Tree(DOMWidget):
 
     nodes = Tuple(trait=Instance(Node)).tag(sync=True, **widget_serialization)
     multiple_selection = Bool(True, read_only=True).tag(sync=True)
+    selected_nodes = Tuple(trait=Instance(Node), read_only=True).tag(sync=True, **widget_serialization)
 
     _id = Unicode('#', read_only=True).tag(sync=True)
 

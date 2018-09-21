@@ -232,11 +232,13 @@ var TreeModel = widgets.DOMWidgetModel.extend({
         _view_module_version: '0.0.1',
         nodes: [],
         multiple_selection: true,
+        selected_nodes: [],
         _id: '#'
     })
 }, {
     serializers: _.extend({
         nodes: { deserialize: widgets.unpack_models },
+        selected_nodes: { deserialize: widgets.unpack_models },
     }, widgets.DOMWidgetModel.serializers)
 });
 
@@ -304,6 +306,15 @@ var TreeView = widgets.DOMWidgetView.extend({
             "close_node.jstree", (evt, data) => {
                 nodesRegistry[data.node.id].set('opened', false);
                 nodesRegistry[data.node.id].save_changes();
+            }
+        ).bind(
+            "changed.jstree", (evt, data) => {
+                var selected_nodes = [];
+                data.selected.forEach((id) => {
+                    selected_nodes.push(nodesRegistry[id]);
+                });
+                this.model.set('selected_nodes', selected_nodes);
+                this.model.save_changes();
             }
         );
     },

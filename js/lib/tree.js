@@ -40,7 +40,7 @@ var NodeModel = widgets.WidgetModel.extend({
         NodeModel.__super__.initialize.apply(this, arguments);
 
         nodesRegistry[this.get('_id')] = this;
-    },
+    }
 }, {
     serializers: _.extend({
         nodes: { deserialize: widgets.unpack_models },

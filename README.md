@@ -8,7 +8,7 @@ Installation
 
 For a development installation (requires npm),
 
-    $ git clone https://github.com/martinRenou/ipytree.git
+    $ git clone https://github.com/QuantStack/ipytree.git
     $ cd ipytree
     $ pip install -e .
     $ jupyter nbextension install --py --symlink --sys-prefix ipytree

@@ -13,3 +13,8 @@ For a development installation (requires npm),
     $ pip install -e .
     $ jupyter nbextension install --py --symlink --sys-prefix ipytree
     $ jupyter nbextension enable --py --sys-prefix ipytree
+
+You would also need to run those commands from the root dir of the repo in order to make it work with JupyterLab:
+
+    $ jupyter labextension install @jupyter-widgets/jupyterlab-manager
+    $ jupyter labextension install js

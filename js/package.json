@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@jupyter-widgets/base": "^1.0.0",
-    "jstree": "^3.3.5",
+    "jstree": "3.3.5",
     "lodash": "^4.17.4"
   },
   "jupyterlab": {

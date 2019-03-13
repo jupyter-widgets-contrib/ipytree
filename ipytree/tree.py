@@ -1,7 +1,7 @@
 from ipywidgets import register, Widget, DOMWidget, widget_serialization
 from traitlets import (
     default, TraitError,
-    Bool, Unicode, Enum, Tuple, Instance
+    Bool, Int, Unicode, Enum, Tuple, Instance
 )
 import uuid
 
@@ -84,17 +84,19 @@ class Tree(DOMWidget):
 
     nodes = Tuple(trait=Instance(Node)).tag(sync=True, **widget_serialization)
     multiple_selection = Bool(True, read_only=True).tag(sync=True)
+    animation = Int(200, read_only=True).tag(sync=True)
     selected_nodes = Tuple(trait=Instance(Node), read_only=True).tag(sync=True, **widget_serialization)
 
     _id = Unicode('#', read_only=True).tag(sync=True)
 
     def __init__(
-            self, nodes=[], multiple_selection=True,
+            self, nodes=[], multiple_selection=True, animation=200,
             **kwargs):
         super(Tree, self).__init__(**kwargs)
 
         self.nodes = nodes
         self.set_trait('multiple_selection', multiple_selection)
+        self.set_trait('animation', animation)
 
     def add_node(self, node, position=None):
         if not isinstance(node, Node):

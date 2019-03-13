@@ -232,6 +232,7 @@ var TreeModel = widgets.DOMWidgetModel.extend({
         _view_module_version: '0.0.1',
         nodes: [],
         multiple_selection: true,
+        animation: 200,
         selected_nodes: [],
         _id: '#'
     })
@@ -249,6 +250,7 @@ var TreeView = widgets.DOMWidgetView.extend({
                 'core': {
                     check_callback: true,
                     multiple: this.model.get('multiple_selection'),
+                    animation: this.model.get('animation'),
                 },
                 'plugins': [
                     'wholerow'

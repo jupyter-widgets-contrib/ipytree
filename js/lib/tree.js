@@ -300,7 +300,7 @@ var TreeView = widgets.DOMWidgetView.extend({
                 }
             }
         ).bind(
-            "before_open.jstree", (evt, data) => {
+            "after_open.jstree", (evt, data) => {
                 nodesRegistry[data.node.id].set('opened', true);
                 nodesRegistry[data.node.id].save_changes();
             }

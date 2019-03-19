@@ -3,6 +3,8 @@ ipytree
 
 A Tree Widget using Jupyter-widgets protocol and [jsTree](https://www.jstree.com/)
 
+![Tree Screencast](./ipytree.gif)
+
 Installation
 ------------
 

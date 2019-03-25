@@ -136,7 +136,7 @@ setup_args = {
             'ipytree/static/index.js',
             'ipytree/static/index.js.map',
         ],),
-        ('etc/jupyter/nbconfig/notebook.d/' ,['ipytree.json'])
+        ('etc/jupyter/nbconfig/notebook.d' ,['ipytree.json'])
     ],
     'install_requires': [
         'ipywidgets>=7.0.0',

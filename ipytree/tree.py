@@ -4,6 +4,7 @@ from traitlets import (
     Bool, Int, Unicode, Enum, Tuple, Instance
 )
 import uuid
+from ._version import __version__
 
 
 def id_gen():
@@ -17,8 +18,8 @@ class Node(Widget):
     _model_name = Unicode('NodeModel').tag(sync=True)
     _view_module = Unicode('ipytree').tag(sync=True)
     _model_module = Unicode('ipytree').tag(sync=True)
-    _view_module_version = Unicode('^0.0.1').tag(sync=True)
-    _model_module_version = Unicode('^0.0.1').tag(sync=True)
+    _view_module_version = Unicode(__version__).tag(sync=True)
+    _model_module_version = Unicode(__version__).tag(sync=True)
 
     _style_values = [
         "warning", "danger", "success", "info", "default"
@@ -79,8 +80,8 @@ class Tree(DOMWidget):
     _model_name = Unicode('TreeModel').tag(sync=True)
     _view_module = Unicode('ipytree').tag(sync=True)
     _model_module = Unicode('ipytree').tag(sync=True)
-    _view_module_version = Unicode('^0.0.1').tag(sync=True)
-    _model_module_version = Unicode('^0.0.1').tag(sync=True)
+    _view_module_version = Unicode(__version__).tag(sync=True)
+    _model_module_version = Unicode(__version__).tag(sync=True)
 
     nodes = Tuple(trait=Instance(Node)).tag(sync=True, **widget_serialization)
     multiple_selection = Bool(True, read_only=True).tag(sync=True)

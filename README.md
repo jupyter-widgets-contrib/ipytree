@@ -3,7 +3,7 @@ ipytree
 
 A Tree Widget using Jupyter-widgets protocol and [jsTree](https://www.jstree.com/)
 
-Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/QuantStack/ipytree/master)
+Try it out using binder: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/QuantStack/ipytree/stable?filepath=examples)
 
 ![Tree Screencast](./ipytree.gif)
 

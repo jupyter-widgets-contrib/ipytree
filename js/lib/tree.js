@@ -8,6 +8,7 @@ require('jstree');
 
 var nodesRegistry = {};
 var triggerIconsUpdate = function() {
+		console.log("Icons updated");
     for(var id in nodesRegistry) {
         nodesRegistry[id].trigger('icons_update');
     }
@@ -36,7 +37,6 @@ var NodeModel = widgets.WidgetModel.extend({
 
     initialize: function() {
         NodeModel.__super__.initialize.apply(this, arguments);
-
         nodesRegistry[this.get('_id')] = this;
     }
 }, {
@@ -48,7 +48,6 @@ var NodeModel = widgets.WidgetModel.extend({
 var NodeView = widgets.WidgetView.extend({
     initialize: function (parameters) {
         NodeView.__super__.initialize.apply(this, arguments);
-
         this.parentModel = this.options.parentModel;
         this.treeView = this.options.treeView;
 
@@ -151,7 +150,7 @@ var NodeView = widgets.WidgetView.extend({
         this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
         this.listenTo(this.model, 'icons_update', this.setOpenCloseIcon);
 
-        triggerIconsUpdate();
+        //triggerIconsUpdate();
     },
 
     addNodeModel: function(nodeModel) {
@@ -255,8 +254,9 @@ var TreeView = widgets.DOMWidgetView.extend({
                 this.tree = $(this.el).jstree(true);
 
                 this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
-                this.nodeViews.update(this.model.get('nodes'));
-
+								console.log("Before updating");
+								this.nodeViews.update(this.model.get('nodes'));
+								console.log("After updating");
                 this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
 
                 this.initTreeEventListeners();
@@ -313,6 +313,7 @@ var TreeView = widgets.DOMWidgetView.extend({
                 });
                 this.model.set('selected_nodes', selected_nodes);
                 this.model.save_changes();
+								triggerIconsUpdate();
             }
         );
     },

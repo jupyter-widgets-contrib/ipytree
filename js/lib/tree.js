@@ -106,7 +106,8 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     setOpenCloseIcon: function() {
-        var open_icon = this.getOpenIcon();
+        console.log("Updating icons for real");
+				var open_icon = this.getOpenIcon();
         var close_icon = this.getCloseIcon();
         var icon_element = this.getOpenCloseIconElement();
 
@@ -125,10 +126,13 @@ var NodeView = widgets.WidgetView.extend({
         }
 
         if(this.model.get('opened')) {
+						console.log("opened");
             icon_element.removeClass(open_icon).addClass(close_icon);
         } else {
+						console.log("closed");
             icon_element.removeClass(close_icon).addClass(open_icon);
         }
+				console.log(icon_element);
     },
 
     onRendered: function() {
@@ -149,8 +153,13 @@ var NodeView = widgets.WidgetView.extend({
         this.listenTo(this.model, 'change:close_icon_style', this.setOpenCloseIcon);
         this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
         this.listenTo(this.model, 'icons_update', this.setOpenCloseIcon);
-
+				console.log("Parent icons about to be updated");	
+				//this.setOpenCloseIcon();
+				//console.log(this.parentModel);
+				this.parentModel.trigger('icons_update');
+				this.parentModel.trigger('change:icon');
         //triggerIconsUpdate();
+				console.log("Parent icons updated");
     },
 
     addNodeModel: function(nodeModel) {
@@ -172,7 +181,8 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     handleOpenedChange: function() {
-        triggerIconsUpdate();
+       // triggerIconsUpdate();
+				this.setOpenCloseIcon();
         if(this.model.get('opened')) {
             this.tree.open_node(this.model.get('_id'));
         } else {
@@ -201,9 +211,9 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     handleNodesChange: function() {
-        this.nodeViews.update(this.model.get('nodes'));
-        triggerIconsUpdate();
-    },
+    	this.nodeViews.update(this.model.get('nodes'));	
+			this.setOpenCloseIcon();
+		},
 
     remove: function() {
         NodeView.__super__.remove.apply(this, arguments);
@@ -264,6 +274,8 @@ var TreeView = widgets.DOMWidgetView.extend({
                 resolve();
             });
         });
+			console.log("RENDERED");
+			triggerIconsUpdate();
     },
 
     initTreeEventListeners: function() {
@@ -313,7 +325,6 @@ var TreeView = widgets.DOMWidgetView.extend({
                 });
                 this.model.set('selected_nodes', selected_nodes);
                 this.model.save_changes();
-								triggerIconsUpdate();
             }
         );
     },

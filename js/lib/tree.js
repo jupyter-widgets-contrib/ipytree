@@ -8,7 +8,7 @@ require('jstree');
 
 var nodesRegistry = {};
 var triggerIconsUpdate = function() {
-		console.log("Icons updated");
+		//console.log("Icons updated");
     for(var id in nodesRegistry) {
         nodesRegistry[id].trigger('icons_update');
     }
@@ -38,6 +38,9 @@ var NodeModel = widgets.WidgetModel.extend({
     initialize: function() {
         NodeModel.__super__.initialize.apply(this, arguments);
         nodesRegistry[this.get('_id')] = this;
+				//this.trigger('icons_update');
+				//this.trigger('change:icon');
+				//console.log(this);
     }
 }, {
     serializers: _.extend({
@@ -49,6 +52,8 @@ var NodeView = widgets.WidgetView.extend({
     initialize: function (parameters) {
         NodeView.__super__.initialize.apply(this, arguments);
         this.parentModel = this.options.parentModel;
+				//console.log("Options:");
+				//console.log(this.options);
         this.treeView = this.options.treeView;
 
         this.treeView.waitTree.then(() => {
@@ -106,7 +111,7 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     setOpenCloseIcon: function() {
-        console.log("Updating icons for real");
+        //console.log("Updating icons for real");
 				var open_icon = this.getOpenIcon();
         var close_icon = this.getCloseIcon();
         var icon_element = this.getOpenCloseIconElement();
@@ -126,15 +131,15 @@ var NodeView = widgets.WidgetView.extend({
         }
 
         if(this.model.get('opened')) {
-						console.log("opened");
+						//console.log("opened");
             icon_element.removeClass(open_icon).addClass(close_icon);
         } else {
-						console.log("closed");
+						//console.log("closed");
             icon_element.removeClass(close_icon).addClass(open_icon);
         }
-				console.log(icon_element);
+				//console.log(icon_element);
     },
-
+		// Called once at the beginning, when the node is first created
     onRendered: function() {
         this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
         this.nodeViews.update(this.model.get('nodes'));
@@ -153,13 +158,13 @@ var NodeView = widgets.WidgetView.extend({
         this.listenTo(this.model, 'change:close_icon_style', this.setOpenCloseIcon);
         this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
         this.listenTo(this.model, 'icons_update', this.setOpenCloseIcon);
-				console.log("Parent icons about to be updated");	
+				//console.log("Parent icons about to be updated");	
 				//this.setOpenCloseIcon();
 				//console.log(this.parentModel);
 				this.parentModel.trigger('icons_update');
 				this.parentModel.trigger('change:icon');
         //triggerIconsUpdate();
-				console.log("Parent icons updated");
+				//console.log("Parent icons updated");
     },
 
     addNodeModel: function(nodeModel) {
@@ -181,14 +186,30 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     handleOpenedChange: function() {
-       // triggerIconsUpdate();
+  			//console.log(this);
+				//triggerIconsUpdate();
 				this.setOpenCloseIcon();
         if(this.model.get('opened')) {
             this.tree.open_node(this.model.get('_id'));
+    				for(var node in this.nodeViewList) {
+        			// Recursion in order to make icons on all opened levels correct
+							//this.nodeViewList[node].model.trigger('icons_update');
+        			this.nodeViewList[node].handleOpenedChange();
+							//console.log("Open changed on", this.nodeViewList[node]);
+							//this.handleChildrenOpenClose();
+    				}
         } else {
             this.tree.close_node(this.model.get('_id'));
         }
     },
+
+		//handleChildrenOpenClose: function(){
+		//	if(this.model.get('opened')){
+		//		for(var child in this.nodeViewList){
+		//			this.nodeViewList[child].handleChildrenOpenClose();
+		//		}
+		//	}
+		//}
 
     handleDisabledChange: function() {
         if(this.model.get('disabled')) {
@@ -264,9 +285,9 @@ var TreeView = widgets.DOMWidgetView.extend({
                 this.tree = $(this.el).jstree(true);
 
                 this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
-								console.log("Before updating");
+								//console.log("Before updating");
 								this.nodeViews.update(this.model.get('nodes'));
-								console.log("After updating");
+								//console.log("After updating");
                 this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
 
                 this.initTreeEventListeners();
@@ -274,7 +295,7 @@ var TreeView = widgets.DOMWidgetView.extend({
                 resolve();
             });
         });
-			console.log("RENDERED");
+			//console.log("RENDERED");
 			triggerIconsUpdate();
     },
 
@@ -311,6 +332,8 @@ var TreeView = widgets.DOMWidgetView.extend({
             "after_open.jstree", (evt, data) => {
                 nodesRegistry[data.node.id].set('opened', true);
                 nodesRegistry[data.node.id].save_changes();
+								//triggerIconsUpdate();
+								//console.log("After open");
             }
         ).bind(
             "close_node.jstree", (evt, data) => {

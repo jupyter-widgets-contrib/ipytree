@@ -115,8 +115,8 @@ var NodeView = widgets.WidgetView.extend({
 				var open_icon = this.getOpenIcon();
         var close_icon = this.getCloseIcon();
         var icon_element = this.getOpenCloseIconElement();
-
-        if(this.model.get('nodes').length == 0) {
+				// This is okay, because JS passes arrays by reference
+				if(this.model.get('nodes').length == 0) {
             icon_element.removeClass(open_icon).removeClass(close_icon);
             return;
         }
@@ -161,13 +161,20 @@ var NodeView = widgets.WidgetView.extend({
 				//console.log("Parent icons about to be updated");	
 				//this.setOpenCloseIcon();
 				//console.log(this.parentModel);
-				this.parentModel.trigger('icons_update');
-				this.parentModel.trigger('change:icon');
+				// Update parent, so icon of parent is correct
+				// TODO: Reduce how often this is called; 
+				// Maybe add own function for this that returns immediately if children were already present
+				// Relevant only, if parent had not had any children yet
+				//if(this.parentModel.get('nodes').length == 1){
+					this.parentModel.trigger('icons_update');
+				//}
+				//this.parentModel.trigger('change:icon');
         //triggerIconsUpdate();
 				//console.log("Parent icons updated");
     },
 
     addNodeModel: function(nodeModel) {
+				//this.iconChanged = true;
         return this.create_child_view(nodeModel, {
             treeView: this.treeView,
             parentModel: this.model
@@ -189,15 +196,16 @@ var NodeView = widgets.WidgetView.extend({
   			//console.log(this);
 				//triggerIconsUpdate();
 				this.setOpenCloseIcon();
+				//this.iconChanged = false;
         if(this.model.get('opened')) {
             this.tree.open_node(this.model.get('_id'));
-    				for(var node in this.nodeViewList) {
-        			// Recursion in order to make icons on all opened levels correct
-							//this.nodeViewList[node].model.trigger('icons_update');
-        			this.nodeViewList[node].handleOpenedChange();
-							//console.log("Open changed on", this.nodeViewList[node]);
+						for(var node in this.nodeViewList) {
+							// Recursion in order to make icons on all opened levels correct
+							// Optimal way to do it already, needs to be called on every open
+							// for every child, else it will not have an icon
+							this.nodeViewList[node].handleOpenedChange();
 							//this.handleChildrenOpenClose();
-    				}
+						}
         } else {
             this.tree.close_node(this.model.get('_id'));
         }

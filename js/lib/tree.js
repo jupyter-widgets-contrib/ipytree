@@ -108,7 +108,6 @@ var NodeView = widgets.WidgetView.extend({
 				var open_icon = this.getOpenIcon();
         var close_icon = this.getCloseIcon();
         var icon_element = this.getOpenCloseIconElement();
-				// This is okay, because JS passes arrays by reference
 				if(this.model.get('nodes').length == 0) {
             icon_element.removeClass(open_icon).removeClass(close_icon);
             return;
@@ -129,7 +128,6 @@ var NodeView = widgets.WidgetView.extend({
             icon_element.removeClass(close_icon).addClass(open_icon);
         }
     },
-		// Called once at the beginning, when the node is first created
     onRendered: function() {
         this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
         this.nodeViews.update(this.model.get('nodes'));

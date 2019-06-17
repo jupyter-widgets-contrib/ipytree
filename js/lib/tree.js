@@ -267,6 +267,8 @@ var TreeView = widgets.DOMWidgetView.extend({
                 resolve();
             });
         });
+			// TODO: Remove? Adding a peer causes loss of icons
+			triggerIconsUpdate();
     },
 
     initTreeEventListeners: function() {

@@ -147,10 +147,9 @@ var NodeView = widgets.WidgetView.extend({
         this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
         this.listenTo(this.model, 'icons_update', this.setOpenCloseIcon);
 				// Update parent, so icon of parent is correct
-				// Relevant only, if parent had not had any children yet
-				if(this.parentModel.get('nodes').length == 1){
-					this.parentModel.trigger('icons_update');
-				}
+				// Needs to be called every time a new child is added
+				// Else parent icon will not be shown after adding child
+				this.parentModel.trigger('icons_update');
     },
 
     addNodeModel: function(nodeModel) {
@@ -268,7 +267,6 @@ var TreeView = widgets.DOMWidgetView.extend({
                 resolve();
             });
         });
-			triggerIconsUpdate();
     },
 
     initTreeEventListeners: function() {

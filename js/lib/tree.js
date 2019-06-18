@@ -124,6 +124,12 @@ var NodeView = widgets.WidgetView.extend({
 
         if(this.model.get('opened')) {
             icon_element.removeClass(open_icon).addClass(close_icon);
+						for(var node in this.nodeViewList) {
+							// Recursion in order to make icons on all opened levels correct
+							// Optimal way to do it already, needs to be called on every open
+							// for every child, else it will not have an icon
+							this.nodeViewList[node].setOpenCloseIcon();
+						}
         } else {
             icon_element.removeClass(close_icon).addClass(open_icon);
         }
@@ -174,12 +180,6 @@ var NodeView = widgets.WidgetView.extend({
 				this.setOpenCloseIcon();
         if(this.model.get('opened')) {
             this.tree.open_node(this.model.get('_id'));
-						for(var node in this.nodeViewList) {
-							// Recursion in order to make icons on all opened levels correct
-							// Optimal way to do it already, needs to be called on every open
-							// for every child, else it will not have an icon
-							this.nodeViewList[node].handleOpenedChange();
-						}
         } else {
             this.tree.close_node(this.model.get('_id'));
         }
@@ -267,8 +267,6 @@ var TreeView = widgets.DOMWidgetView.extend({
                 resolve();
             });
         });
-			// TODO: Remove? Adding a peer causes loss of icons
-			triggerIconsUpdate();
     },
 
     initTreeEventListeners: function() {
@@ -335,6 +333,13 @@ var TreeView = widgets.DOMWidgetView.extend({
 
     handleNodesChange: function() {
         this.nodeViews.update(this.model.get('nodes'));
+				// If top level nodes are changed, icons disappear
+				// So reload them for all visible nodes
+				Promise.all(this.nodeViews.views).then(function(views) {
+					for(var view in views){
+						views[view].setOpenCloseIcon();
+					}
+				});
     },
 
     remove: function() {

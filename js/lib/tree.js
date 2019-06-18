@@ -7,11 +7,6 @@ require('./theme/style.css');
 require('jstree');
 
 var nodesRegistry = {};
-var triggerIconsUpdate = function() {
-    for(var id in nodesRegistry) {
-        nodesRegistry[id].trigger('icons_update');
-    }
-}
 
 var NodeModel = widgets.WidgetModel.extend({
     defaults: _.extend(widgets.WidgetModel.prototype.defaults(), {
@@ -104,7 +99,7 @@ var NodeView = widgets.WidgetView.extend({
             .find('i.jstree-icon.jstree-ocl').first();
     },
 
-    setOpenCloseIcon: function() {
+    setOpenCloseIcon: function(recursive=false) {
 				var open_icon = this.getOpenIcon();
         var close_icon = this.getCloseIcon();
         var icon_element = this.getOpenCloseIconElement();
@@ -128,7 +123,7 @@ var NodeView = widgets.WidgetView.extend({
 							// Recursion in order to make icons on all opened levels correct
 							// Optimal way to do it already, needs to be called on every open
 							// for every child, else it will not have an icon
-							this.nodeViewList[node].setOpenCloseIcon();
+							this.nodeViewList[node].setOpenCloseIcon(recursive);
 						}
         } else {
             icon_element.removeClass(close_icon).addClass(open_icon);
@@ -177,7 +172,7 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     handleOpenedChange: function() {
-				this.setOpenCloseIcon();
+				this.setOpenCloseIcon(true);
         if(this.model.get('opened')) {
             this.tree.open_node(this.model.get('_id'));
         } else {
@@ -336,7 +331,7 @@ var TreeView = widgets.DOMWidgetView.extend({
 				// So reload them for all visible nodes
 				Promise.all(this.nodeViews.views).then(function(views) {
 					for(var view in views){
-						views[view].setOpenCloseIcon();
+						views[view].setOpenCloseIcon(true);
 					}
 				});
     },

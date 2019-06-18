@@ -207,7 +207,6 @@ var NodeView = widgets.WidgetView.extend({
 
     handleNodesChange: function() {
     	this.nodeViews.update(this.model.get('nodes'));	
-			this.setOpenCloseIcon();
 		},
 
     remove: function() {

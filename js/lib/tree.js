@@ -31,6 +31,7 @@ var NodeModel = widgets.WidgetModel.extend({
 
     initialize: function() {
         NodeModel.__super__.initialize.apply(this, arguments);
+
         nodesRegistry[this.get('_id')] = this;
     }
 }, {
@@ -42,6 +43,7 @@ var NodeModel = widgets.WidgetModel.extend({
 var NodeView = widgets.WidgetView.extend({
     initialize: function (parameters) {
         NodeView.__super__.initialize.apply(this, arguments);
+
         this.parentModel = this.options.parentModel;
         this.treeView = this.options.treeView;
 
@@ -103,6 +105,7 @@ var NodeView = widgets.WidgetView.extend({
         var open_icon = this.getOpenIcon();
         var close_icon = this.getCloseIcon();
         var icon_element = this.getOpenCloseIconElement();
+
         if(this.model.get('nodes').length == 0) {
             icon_element.removeClass(open_icon).removeClass(close_icon);
             return;
@@ -203,7 +206,7 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     handleNodesChange: function() {
-      this.nodeViews.update(this.model.get('nodes')); 
+        this.nodeViews.update(this.model.get('nodes')); 
     },
 
     remove: function() {
@@ -342,7 +345,6 @@ var TreeView = widgets.DOMWidgetView.extend({
         this.stopListening(this.model);
     },
 });
-
 
 module.exports = {
     NodeModel: NodeModel,

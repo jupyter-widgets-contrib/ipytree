@@ -100,10 +100,10 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     setOpenCloseIcon: function(recursive=false) {
-				var open_icon = this.getOpenIcon();
+        var open_icon = this.getOpenIcon();
         var close_icon = this.getCloseIcon();
         var icon_element = this.getOpenCloseIconElement();
-				if(this.model.get('nodes').length == 0) {
+        if(this.model.get('nodes').length == 0) {
             icon_element.removeClass(open_icon).removeClass(close_icon);
             return;
         }
@@ -119,12 +119,14 @@ var NodeView = widgets.WidgetView.extend({
 
         if(this.model.get('opened')) {
             icon_element.removeClass(open_icon).addClass(close_icon);
-						for(var node in this.nodeViewList) {
-							// Recursion in order to make icons on all opened levels correct
-							// Optimal way to do it already, needs to be called on every open
-							// for every child, else it will not have an icon
-							this.nodeViewList[node].setOpenCloseIcon(recursive);
-						}
+            if(recursive){
+            for(var node in this.nodeViewList) {
+                // Recursion in order to make icons on all opened levels correct
+                // Optimal way to do it already, needs to be called on every open
+                // for every child, else it will not have an icon
+                this.nodeViewList[node].setOpenCloseIcon(recursive);
+              }
+            }
         } else {
             icon_element.removeClass(close_icon).addClass(open_icon);
         }
@@ -147,10 +149,10 @@ var NodeView = widgets.WidgetView.extend({
         this.listenTo(this.model, 'change:close_icon_style', this.setOpenCloseIcon);
         this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
         this.listenTo(this.model, 'icons_update', this.setOpenCloseIcon);
-				// Update parent, so icon of parent is correct
-				// Needs to be called every time a new child is added
-				// Else parent icon will not be shown after adding child
-				this.parentModel.trigger('icons_update');
+        // Update parent, so icon of parent is correct
+        // Needs to be called every time a new child is added
+        // Else parent icon will not be shown after adding child
+        this.parentModel.trigger('icons_update');
     },
 
     addNodeModel: function(nodeModel) {
@@ -172,7 +174,7 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     handleOpenedChange: function() {
-				this.setOpenCloseIcon(true);
+        this.setOpenCloseIcon(true);
         if(this.model.get('opened')) {
             this.tree.open_node(this.model.get('_id'));
         } else {
@@ -201,8 +203,8 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     handleNodesChange: function() {
-    	this.nodeViews.update(this.model.get('nodes'));	
-		},
+      this.nodeViews.update(this.model.get('nodes')); 
+    },
 
     remove: function() {
         NodeView.__super__.remove.apply(this, arguments);
@@ -253,7 +255,7 @@ var TreeView = widgets.DOMWidgetView.extend({
                 this.tree = $(this.el).jstree(true);
 
                 this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
-								this.nodeViews.update(this.model.get('nodes'));
+                this.nodeViews.update(this.model.get('nodes'));
                 this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
 
                 this.initTreeEventListeners();
@@ -327,13 +329,13 @@ var TreeView = widgets.DOMWidgetView.extend({
 
     handleNodesChange: function() {
         this.nodeViews.update(this.model.get('nodes'));
-				// If top level nodes are changed, icons disappear
-				// So reload them for all visible nodes
-				Promise.all(this.nodeViews.views).then(function(views) {
-					for(var view in views){
-						views[view].setOpenCloseIcon(true);
-					}
-				});
+        // If top level nodes are changed, icons disappear
+        // So reload them for all visible nodes
+        Promise.all(this.nodeViews.views).then(function(views) {
+          for(var view in views){
+            views[view].setOpenCloseIcon(true);
+          }
+        });
     },
 
     remove: function() {

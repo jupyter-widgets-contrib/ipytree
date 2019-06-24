@@ -7,11 +7,6 @@ require('./theme/style.css');
 require('jstree');
 
 var nodesRegistry = {};
-var triggerIconsUpdate = function() {
-    for(var id in nodesRegistry) {
-        nodesRegistry[id].trigger('icons_update');
-    }
-}
 
 var NodeModel = widgets.WidgetModel.extend({
     defaults: _.extend(widgets.WidgetModel.prototype.defaults(), {
@@ -106,7 +101,7 @@ var NodeView = widgets.WidgetView.extend({
             .find('i.jstree-icon.jstree-ocl').first();
     },
 
-    setOpenCloseIcon: function() {
+    setOpenCloseIcon: function(recursive=false) {
         var open_icon = this.getOpenIcon();
         var close_icon = this.getCloseIcon();
         var icon_element = this.getOpenCloseIconElement();
@@ -127,11 +122,18 @@ var NodeView = widgets.WidgetView.extend({
 
         if(this.model.get('opened')) {
             icon_element.removeClass(open_icon).addClass(close_icon);
+            if(recursive){
+                for(var node in this.nodeViewList) {
+                    // Recursion in order to make icons on all opened levels correct
+                    // Optimal way to do it already, needs to be called on every open
+                    // for every child, else it will not have an icon
+                    this.nodeViewList[node].setOpenCloseIcon(recursive);
+                }
+            }
         } else {
             icon_element.removeClass(close_icon).addClass(open_icon);
         }
     },
-
     onRendered: function() {
         this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
         this.nodeViews.update(this.model.get('nodes'));
@@ -150,8 +152,10 @@ var NodeView = widgets.WidgetView.extend({
         this.listenTo(this.model, 'change:close_icon_style', this.setOpenCloseIcon);
         this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
         this.listenTo(this.model, 'icons_update', this.setOpenCloseIcon);
-
-        triggerIconsUpdate();
+        // Update parent, so icon of parent is correct
+        // Needs to be called every time a new child is added
+        // Else parent icon will not be shown after adding child
+        this.parentModel.trigger('icons_update');
     },
 
     addNodeModel: function(nodeModel) {
@@ -173,7 +177,7 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     handleOpenedChange: function() {
-        triggerIconsUpdate();
+        this.setOpenCloseIcon(true);
         if(this.model.get('opened')) {
             this.tree.open_node(this.model.get('_id'));
         } else {
@@ -202,8 +206,7 @@ var NodeView = widgets.WidgetView.extend({
     },
 
     handleNodesChange: function() {
-        this.nodeViews.update(this.model.get('nodes'));
-        triggerIconsUpdate();
+        this.nodeViews.update(this.model.get('nodes')); 
     },
 
     remove: function() {
@@ -256,7 +259,6 @@ var TreeView = widgets.DOMWidgetView.extend({
 
                 this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
                 this.nodeViews.update(this.model.get('nodes'));
-
                 this.listenTo(this.model, 'change:nodes', this.handleNodesChange);
 
                 this.initTreeEventListeners();
@@ -330,13 +332,19 @@ var TreeView = widgets.DOMWidgetView.extend({
 
     handleNodesChange: function() {
         this.nodeViews.update(this.model.get('nodes'));
+        // If top level nodes are changed, icons disappear
+        // So reload them for all visible nodes
+        Promise.all(this.nodeViews.views).then(function(views) {
+          for(var view in views){
+            views[view].setOpenCloseIcon(true);
+          }
+        });
     },
 
     remove: function() {
         this.stopListening(this.model);
     },
 });
-
 
 module.exports = {
     NodeModel: NodeModel,

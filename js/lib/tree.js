@@ -123,12 +123,12 @@ var NodeView = widgets.WidgetView.extend({
         if(this.model.get('opened')) {
             icon_element.removeClass(open_icon).addClass(close_icon);
             if(recursive){
-            for(var node in this.nodeViewList) {
-                // Recursion in order to make icons on all opened levels correct
-                // Optimal way to do it already, needs to be called on every open
-                // for every child, else it will not have an icon
-                this.nodeViewList[node].setOpenCloseIcon(recursive);
-              }
+                for(var node in this.nodeViewList) {
+                    // Recursion in order to make icons on all opened levels correct
+                    // Optimal way to do it already, needs to be called on every open
+                    // for every child, else it will not have an icon
+                    this.nodeViewList[node].setOpenCloseIcon(recursive);
+                }
             }
         } else {
             icon_element.removeClass(close_icon).addClass(open_icon);

@@ -1,8 +1,6 @@
 var widgets = require('@jupyter-widgets/base');
 var _ = require('lodash');
 var $ = require('jquery');
-require('./theme/materialcolors.css');
-require('./theme/labvariables.css');
 require('./theme/style.css');
 require('jstree');
 

@@ -139,7 +139,7 @@ setup_args = {
         ('etc/jupyter/nbconfig/notebook.d' ,['ipytree.json'])
     ],
     'install_requires': [
-        'ipywidgets>=7.0.0',
+        'ipywidgets>=7.5.0,<8',
     ],
     'packages': find_packages(),
     'zip_safe': False,

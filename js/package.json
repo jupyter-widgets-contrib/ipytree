@@ -33,7 +33,7 @@
     "url-loader": "^1.1.1"
   },
   "dependencies": {
-    "@jupyter-widgets/base": "^1.0.0",
+    "@jupyter-widgets/base": "^2.0",
     "jstree": "3.3.5",
     "lodash": "^4.17.4"
   },

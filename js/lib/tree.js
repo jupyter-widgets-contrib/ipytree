@@ -18,6 +18,7 @@ var NodeModel = widgets.WidgetModel.extend({
         selected: false,
         show_icon: true,
         icon: 'folder',
+        icon_image: '',
         icon_style: 'default',
         open_icon: 'plus',
         open_icon_style: 'default',
@@ -75,8 +76,12 @@ var NodeView = widgets.WidgetView.extend({
         }
 
         var icon = this.model.get('icon');
-        icon = 'fa fa-' + icon + ' ipytree-style-' + this.model.get('icon_style');
-
+        var icon_image = this.model.get('icon_image');
+        if (icon_image) {
+            icon = icon_image;
+        } else {
+            icon = 'fa fa-' + icon + ' ipytree-style-' + this.model.get('icon_style');
+        }
         return icon;
     },
 
@@ -143,6 +148,7 @@ var NodeView = widgets.WidgetView.extend({
         this.listenTo(this.model, 'change:selected', this.handleSelectedChange);
         this.listenTo(this.model, 'change:show_icon', this.handleIconChange);
         this.listenTo(this.model, 'change:icon', this.handleIconChange);
+        this.listenTo(this.model, 'change:icon_image', this.handleIconChange);
         this.listenTo(this.model, 'change:icon_style', this.handleIconChange);
         this.listenTo(this.model, 'change:open_icon', this.setOpenCloseIcon);
         this.listenTo(this.model, 'change:open_icon_style', this.setOpenCloseIcon);

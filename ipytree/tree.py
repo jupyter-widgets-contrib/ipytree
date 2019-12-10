@@ -33,6 +33,7 @@ class Node(Widget):
     show_icon = Bool(True).tag(sync=True)
     icon = Unicode("folder").tag(sync=True)
     icon_style = Enum(values=_style_values, default_value="default").tag(sync=True)
+    icon_image = Unicode("").tag(sync=True)
 
     open_icon = Unicode("plus").tag(sync=True)
     open_icon_style = Enum(values=_style_values, default_value="default").tag(sync=True)
@@ -45,11 +46,12 @@ class Node(Widget):
 
     _id = Unicode(read_only=True).tag(sync=True)
 
-    def __init__(self, name="Node", nodes=[], **kwargs):
+    def __init__(self, name="Node", nodes=[], icon_image="", **kwargs):
         super(Node, self).__init__(**kwargs)
 
         self.name = name
         self.nodes = nodes
+        self.icon_image = icon_image
 
     @default('_id')
     def _default_id(self):

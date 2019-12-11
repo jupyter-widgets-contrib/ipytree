@@ -33,6 +33,7 @@ class Node(Widget):
     show_icon = Bool(True).tag(sync=True)
     icon = Unicode("folder").tag(sync=True)
     icon_style = Enum(values=_style_values, default_value="default").tag(sync=True)
+    icon_image = Unicode("").tag(sync=True)
 
     open_icon = Unicode("plus").tag(sync=True)
     open_icon_style = Enum(values=_style_values, default_value="default").tag(sync=True)

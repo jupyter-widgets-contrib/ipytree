@@ -46,12 +46,11 @@ class Node(Widget):
 
     _id = Unicode(read_only=True).tag(sync=True)
 
-    def __init__(self, name="Node", nodes=[], icon_image="", **kwargs):
+    def __init__(self, name="Node", nodes=[], **kwargs):
         super(Node, self).__init__(**kwargs)
 
         self.name = name
         self.nodes = nodes
-        self.icon_image = icon_image
 
     @default('_id')
     def _default_id(self):

@@ -41,7 +41,7 @@ class Node(Widget):
     close_icon = Unicode("minus").tag(sync=True)
     close_icon_style = Enum(values=_style_values, default_value="default").tag(sync=True)
 
-    nodes = Tuple(trait=Instance(Widget)).tag(
+    nodes = Tuple().tag(trait=Instance(Widget),
         sync=True, **widget_serialization)
 
     _id = Unicode(read_only=True).tag(sync=True)
@@ -84,10 +84,10 @@ class Tree(DOMWidget):
     _view_module_version = Unicode(__version__).tag(sync=True)
     _model_module_version = Unicode(__version__).tag(sync=True)
 
-    nodes = Tuple(trait=Instance(Node)).tag(sync=True, **widget_serialization)
+    nodes = Tuple().tag(trait=Instance(Node), sync=True, **widget_serialization)
     multiple_selection = Bool(True, read_only=True).tag(sync=True)
     animation = Int(200, read_only=True).tag(sync=True)
-    selected_nodes = Tuple(trait=Instance(Node), read_only=True).tag(sync=True, **widget_serialization)
+    selected_nodes = Tuple(read_only=True).tag(trait=Instance(Node),sync=True, **widget_serialization)
 
     _id = Unicode('#', read_only=True).tag(sync=True)
 

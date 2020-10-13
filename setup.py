@@ -31,7 +31,8 @@ jstargets = [
 ]
 
 data_files_spec = [
-    ('share/jupyter/nbextensions/ipytree', 'ipytree/static', '*.*'),
+    ('share/jupyter/nbextensions/ipytree', 'ipytree/nbextension', '*.*'),
+    ('share/jupyter/labextensions/ipytree', 'ipytree/labextension', "*.*"),
     ('etc/jupyter/nbconfig/notebook.d', '.', 'ipytree.json'),
 ]
 

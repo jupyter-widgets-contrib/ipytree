@@ -22,23 +22,32 @@
     "dist/*.js"
   ],
   "scripts": {
-    "build": "webpack",
-    "clean": "rimraf dist/",
-    "prepublish": "webpack"
+    "build": "webpack && npm run build:labextension",
+    "build:labextension": "jupyter labextension build .",
+    "clean": "rimraf dist/ && rimraf ../ipytree/labextension/ && rimraf ../ipytree/nbextension",
+    "prepublish": "npm run clean && npm run build"
   },
   "devDependencies": {
-    "webpack": "^3.5.5",
+    "@jupyterlab/builder": "^3.0.0-rc.4",
+    "webpack": "^4.41.5",
     "rimraf": "^2.6.1",
     "style-loader": "^0.18.1",
     "css-loader": "^0.28.7",
     "url-loader": "^1.1.1"
   },
   "dependencies": {
-    "@jupyter-widgets/base": "^2 || ^3",
+    "@jupyter-widgets/base": "^2 || ^3 || ^4.0.0-beta.1",
     "jstree": "~3.3.9",
     "lodash": "^4.17.4"
   },
   "jupyterlab": {
-    "extension": "lib/labplugin"
+    "extension": "lib/labplugin",
+    "outputDir": "../ipytree/labextension",
+    "sharedPackages": {
+      "@jupyter-widgets/base": {
+        "bundled": false,
+        "singleton": true
+      }
+    }
   }
 }

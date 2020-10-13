@@ -22,9 +22,9 @@
     "dist/*.js"
   ],
   "scripts": {
+    "build": "webpack",
     "clean": "rimraf dist/",
-    "prepublish": "webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepublish": "webpack"
   },
   "devDependencies": {
     "webpack": "^3.5.5",

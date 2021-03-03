@@ -6,7 +6,8 @@ build/
 node_modules/
 
 # Compiled javascript
-ipytree/static/
+ipytree/nbextension/
+ipytree/labextension/
 
 # OS X
 .DS_Store

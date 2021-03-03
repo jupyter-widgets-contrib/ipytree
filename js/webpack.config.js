@@ -18,16 +18,18 @@ module.exports = [
         entry: './lib/extension.js',
         output: {
             filename: 'extension.js',
-            path: path.resolve(__dirname, '..', 'ipytree', 'static'),
-            libraryTarget: 'amd'
+            path: path.resolve(__dirname, '..', 'ipytree', 'nbextension'),
+            libraryTarget: 'amd',
+            publicPath: ''
         }
     },
     {
         entry: './lib/index.js',
         output: {
             filename: 'index.js',
-            path: path.resolve(__dirname, '..', 'ipytree', 'static'),
-            libraryTarget: 'amd'
+            path: path.resolve(__dirname, '..', 'ipytree', 'nbextension'),
+            libraryTarget: 'amd',
+            publicPath: ''
         },
         devtool: 'source-map',
         module: {

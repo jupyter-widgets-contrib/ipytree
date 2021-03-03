@@ -1,2 +1,9 @@
-recursive-include ipytree/static *.*
+recursive-include ipytree/nbextension *.*
+recursive-include ipytree/labextension *.*
+
 include ipytree.json
+include js/package.json
+
+include LICENSE
+include setup.py
+include pyproject.toml

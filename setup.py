@@ -24,7 +24,8 @@ js_dir = os.path.join(here, 'js')
 
 # Representative files that should exist after a successful build
 jstargets = [
-    os.path.join(js_dir, 'dist', 'index.js'),
+    os.path.join('ipytree/nbextension', 'index.js'),
+    os.path.join('ipytree/labextension', 'package.json'),
 ]
 
 data_files_spec = [

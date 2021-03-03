@@ -5,7 +5,7 @@ from .tree import *
 def _jupyter_nbextension_paths():
     return [{
         'section': 'notebook',
-        'src': 'static',
+        'src': 'nbextension',
         'dest': 'ipytree',
         'require': 'ipytree/extension'
     }]

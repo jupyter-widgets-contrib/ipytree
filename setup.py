@@ -4,11 +4,8 @@ import os
 from distutils import log
 
 from jupyter_packaging import (
-    create_cmdclass,
-    install_npm,
-    ensure_targets,
-    combine_commands,
-    get_version,
+    create_cmdclass, install_npm, ensure_targets,
+    combine_commands, get_version, skip_if_exists
 )
 
 name = 'ipytree'
@@ -31,15 +28,21 @@ jstargets = [
 ]
 
 data_files_spec = [
-    ('share/jupyter/nbextensions/ipytree', 'ipytree/nbextension', '*.*'),
-    ('share/jupyter/labextensions/ipytree', 'ipytree/labextension', "*.*"),
+    ('share/jupyter/nbextensions/ipytree', 'ipytree/nbextension', '**'),
+    ('share/jupyter/labextensions/ipytree', 'ipytree/labextension', "**"),
     ('etc/jupyter/nbconfig/notebook.d', '.', 'ipytree.json'),
 ]
 
 cmdclass = create_cmdclass('jsdeps', data_files_spec=data_files_spec)
-cmdclass['jsdeps'] = combine_commands(
-    install_npm(js_dir, build_cmd='build'), ensure_targets(jstargets),
+js_command = combine_commands(
+    install_npm(js_dir, npm=["yarn"], build_cmd='build'), ensure_targets(jstargets),
 )
+
+is_repo = os.path.exists(os.path.join(here, '.git'))
+if is_repo:
+    cmdclass['jsdeps'] = js_command
+else:
+    cmdclass['jsdeps'] = skip_if_exists(jstargets, js_command)
 
 setup_args = {
     'name': name,

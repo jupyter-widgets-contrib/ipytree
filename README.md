@@ -22,10 +22,9 @@ With pip:
 $ pip install ipytree
 ```
 
-To make it work for Jupyter lab:
+If you use JupyterLab<=2:
 ```
-$ jupyter labextension install @jupyter-widgets/jupyterlab-manager
-$ jupyter labextension install ipytree
+$ jupyter labextension install @jupyter-widgets/jupyterlab-manager ipytree
 ```
 
 If you have notebook 5.2 or below, you also need to execute:
@@ -33,13 +32,11 @@ If you have notebook 5.2 or below, you also need to execute:
 $ jupyter nbextension enable --py --sys-prefix ipytree
 ```
 
-For a development installation (requires npm),
+For a development installation (requires yarn and JupyterLab 3),
 ```
 $ git clone https://github.com/QuantStack/ipytree.git
 $ cd ipytree
 $ pip install -e .
 $ jupyter nbextension install --py --symlink --sys-prefix ipytree
 $ jupyter nbextension enable --py --sys-prefix ipytree
-$ jupyter labextension install @jupyter-widgets/jupyterlab-manager
-$ jupyter labextension install js
 ```

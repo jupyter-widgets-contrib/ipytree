@@ -24,8 +24,7 @@
   "scripts": {
     "build": "webpack && npm run build:labextension",
     "build:labextension": "jupyter labextension build .",
-    "clean": "rimraf dist/ && rimraf ../ipytree/labextension/ && rimraf ../ipytree/nbextension",
-    "prepublish": "npm run clean && npm run build"
+    "clean": "rimraf dist/ && rimraf ../ipytree/labextension/ && rimraf ../ipytree/nbextension"
   },
   "devDependencies": {
     "@jupyterlab/builder": "^3.0.0",

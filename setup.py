@@ -48,6 +48,7 @@ else:
 setup_args = {
     'name': name,
     'version': version,
+    'license': 'MIT License',
     'description': 'A Tree Widget using jsTree',
     'long_description': long_description,
     'include_package_data': True,

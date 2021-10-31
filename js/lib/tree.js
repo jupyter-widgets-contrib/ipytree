@@ -324,7 +324,6 @@ var TreeView = widgets.DOMWidgetView.extend({
             }
         ).bind(
             "move_node.jstree", (evt, data) => {
-
                 var nodes1 = [];  // new value for old_parent.children
                 data.instance._model.data[data.old_parent].children.slice().forEach((id) => {
                     nodes1.push(nodesRegistry[id]);
@@ -336,6 +335,8 @@ var TreeView = widgets.DOMWidgetView.extend({
                 });
 
                 if (data.old_parent == "#") {
+                    // silently update the model's node tree. `silent` ensures that
+                    // the change event does not duplicate the move on the frontend
                     this.model.set('nodes', nodes1, {silent: true});
                     this.model.save_changes();
                 } else {

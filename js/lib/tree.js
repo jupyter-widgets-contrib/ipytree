@@ -326,28 +326,28 @@ var TreeView = widgets.DOMWidgetView.extend({
             "move_node.jstree", (evt, data) => {
 
                 var nodes1 = [];  // new value for old_parent.children
-                data.instance._model.data[data.old_parent].children.forEach((id) => {
+                data.instance._model.data[data.old_parent].children.slice().forEach((id) => {
                     nodes1.push(nodesRegistry[id]);
                 });
-                
+
                 var nodes2 = [];  // new value for parent.children
-                data.instance._model.data[data.parent].children.forEach((id) => {
+                data.instance._model.data[data.parent].children.slice().forEach((id) => {
                     nodes2.push(nodesRegistry[id]);
                 });
 
                 if (data.old_parent == "#") {
-                    this.model.set('nodes', nodes1);
+                    this.model.set('nodes', nodes1, {silent: true});
                     this.model.save_changes();
                 } else {
-                    nodesRegistry[data.old_parent].set('nodes', nodes1);
+                    nodesRegistry[data.old_parent].set('nodes', nodes1, {silent: true});
                     nodesRegistry[data.old_parent].save_changes();
                 }
-                
+
                 if (data.parent == "#") {
-                    this.model.set('nodes', nodes2);
+                    this.model.set('nodes', nodes2, {silent: true});
                     this.model.save_changes();
                 } else {
-                    nodesRegistry[data.parent].set('nodes', nodes2);
+                    nodesRegistry[data.parent].set('nodes', nodes2, {silent: true});
                     nodesRegistry[data.parent].save_changes();
                 }
             }

@@ -137,6 +137,7 @@ var NodeView = widgets.WidgetView.extend({
             icon_element.removeClass(close_icon).addClass(open_icon);
         }
     },
+
     onRendered: function() {
         this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
         this.nodeViews.update(this.model.get('nodes'));
@@ -256,7 +257,8 @@ var TreeView = widgets.DOMWidgetView.extend({
                     animation: this.model.get('animation'),
                 },
                 'plugins': [
-                    'wholerow'
+                    'wholerow',
+                    'dnd'
                 ]
             }).on('ready.jstree', () => {
                 this.tree = $(this.el).jstree(true);
@@ -319,6 +321,35 @@ var TreeView = widgets.DOMWidgetView.extend({
                 });
                 this.model.set('selected_nodes', selected_nodes);
                 this.model.save_changes();
+            }
+        ).bind(
+            "move_node.jstree", (evt, data) => {
+
+                var nodes1 = [];  // new value for old_parent.children
+                data.instance._model.data[data.old_parent].children.forEach((id) => {
+                    nodes1.push(nodesRegistry[id]);
+                });
+                
+                var nodes2 = [];  // new value for parent.children
+                data.instance._model.data[data.parent].children.forEach((id) => {
+                    nodes2.push(nodesRegistry[id]);
+                });
+
+                if (data.old_parent == "#") {
+                    this.model.set('nodes', nodes1);
+                    this.model.save_changes();
+                } else {
+                    nodesRegistry[data.old_parent].set('nodes', nodes1);
+                    nodesRegistry[data.old_parent].save_changes();
+                }
+                
+                if (data.parent == "#") {
+                    this.model.set('nodes', nodes2);
+                    this.model.save_changes();
+                } else {
+                    nodesRegistry[data.parent].set('nodes', nodes2);
+                    nodesRegistry[data.parent].save_changes();
+                }
             }
         );
     },

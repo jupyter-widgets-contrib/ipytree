@@ -32,6 +32,22 @@ var NodeModel = widgets.WidgetModel.extend({
         NodeModel.__super__.initialize.apply(this, arguments);
 
         nodesRegistry[this.get('_id')] = this;
+    },
+
+    contains: function(node) {
+        // Recursively search for node
+        // params:
+        //      node <string>: id of the node to search for
+        // Returns true if found
+        if (node == this.get("_id")) return true;
+        var arr = this.get('nodes');
+        for (var i=0; i<arr.length; i++) {
+            var child = arr[i];
+            if (child.contains(node)) {
+                return true;
+            }
+        }
+        return false;
     }
 }, {
     serializers: _.extend({
@@ -137,6 +153,7 @@ var NodeView = widgets.WidgetView.extend({
             icon_element.removeClass(close_icon).addClass(open_icon);
         }
     },
+
     onRendered: function() {
         this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
         this.nodeViews.update(this.model.get('nodes'));
@@ -235,6 +252,7 @@ var TreeModel = widgets.DOMWidgetModel.extend({
         _view_module: 'ipytree',
         nodes: [],
         multiple_selection: true,
+        drag_and_drop: true,
         animation: 200,
         selected_nodes: [],
         _id: '#'
@@ -249,15 +267,17 @@ var TreeModel = widgets.DOMWidgetModel.extend({
 var TreeView = widgets.DOMWidgetView.extend({
     render: function() {
         this.waitTree = new Promise((resolve, reject) => {
+            var plugins = ['wholerow']
+            if (this.model.get('drag_and_drop')) {
+                plugins.push('dnd');
+            }
             $(this.el).jstree({
                 'core': {
                     check_callback: true,
                     multiple: this.model.get('multiple_selection'),
                     animation: this.model.get('animation'),
                 },
-                'plugins': [
-                    'wholerow'
-                ]
+                'plugins': plugins
             }).on('ready.jstree', () => {
                 this.tree = $(this.el).jstree(true);
 
@@ -319,6 +339,55 @@ var TreeView = widgets.DOMWidgetView.extend({
                 });
                 this.model.set('selected_nodes', selected_nodes);
                 this.model.save_changes();
+            }
+        ).bind(
+            "move_node.jstree", (evt, data) => {
+
+                var new_parent = ((data.parent == "#") ? this.model : nodesRegistry[data.parent]);
+                var old_parent = ((data.old_parent == "#") ? this.model : nodesRegistry[data.old_parent]);
+
+                var np_children = [];  // new children of new_parent
+                var op_children = [];  // new children of old_parent
+
+                var update_np_quietly = false;
+                // If updating the old_parent's children changes the index of a new ancestor
+                // of the moved node, then the change event will propagate through the ancestor
+                // and eventually update the new parent.
+                // If we then explicitly update the new parent, then it's children will be duplicated
+                // on the front end, which is bad.
+                // This happens if the moved node was above a new ancestor. For example,
+                //   | - node1    ->  | - node2
+                //   | - node2        |    - node1
+                // root.indexof(node2) changes from 1 to 0, so the change event is propagated to node2
+
+
+                // Construct the new list of children for the old_parent
+                var i = -1;
+                data.instance._model.data[data.old_parent].children.slice().forEach((id) => {
+                    i++;
+                    op_children.push(nodesRegistry[id]);
+
+                    // Once the old index of the moved node has been reached
+                    // it is necessary to start searching for the new parent
+                    // in order to catch the double change event issue.
+                    if (i >= data.old_position) {
+                        if (nodesRegistry[id].contains(data.parent)) {
+                            update_np_quietly = true;
+                        }
+                    }
+                });
+
+                // Construct the new list of children for the new_parent
+                data.instance._model.data[data.parent].children.slice().forEach((id) => {
+                    np_children.push(nodesRegistry[id]);
+                });
+
+                // Set and propagate the change events
+                old_parent.set('nodes', op_children);
+                old_parent.save_changes();
+                
+                new_parent.set('nodes', np_children, {silent: update_np_quietly});
+                new_parent.save_changes();
             }
         );
     },

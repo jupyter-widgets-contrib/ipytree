@@ -86,18 +86,20 @@ class Tree(DOMWidget):
 
     nodes = Tuple().tag(trait=Instance(Node), sync=True, **widget_serialization)
     multiple_selection = Bool(True, read_only=True).tag(sync=True)
+    drag_and_drop = Bool(True, read_only=True).tag(sync=True)
     animation = Int(200, read_only=True).tag(sync=True)
     selected_nodes = Tuple(read_only=True).tag(trait=Instance(Node),sync=True, **widget_serialization)
 
     _id = Unicode('#', read_only=True).tag(sync=True)
 
     def __init__(
-            self, nodes=[], multiple_selection=True, animation=200,
+            self, nodes=[], multiple_selection=True, animation=200, drag_and_drop=True,
             **kwargs):
         super(Tree, self).__init__(**kwargs)
 
         self.nodes = nodes
         self.set_trait('multiple_selection', multiple_selection)
+        self.set_trait('drag_and_drop', drag_and_drop)
         self.set_trait('animation', animation)
 
     def add_node(self, node, position=None):

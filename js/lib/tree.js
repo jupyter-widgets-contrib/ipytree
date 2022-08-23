@@ -31,8 +31,8 @@ export class NodeModel extends widgets.WidgetModel {
         };
     }
 
-    initialize() {
-        super.initialize(arguments);
+    initialize(attributes, options) {
+        super.initialize(attributes, options);
 
         nodesRegistry[this.get('_id')] = this;
     }
@@ -44,8 +44,8 @@ NodeModel.serializers = {
 };
 
 export class NodeView extends widgets.WidgetView {
-    initialize() {
-        super.initialize(arguments);
+    initialize(attributes, options) {
+        super.initialize(attributes, options);
 
         this.parentModel = this.options.parentModel;
         this.treeView = this.options.treeView;

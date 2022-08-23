@@ -6,42 +6,46 @@ require('jstree');
 
 var nodesRegistry = {};
 
-var NodeModel = widgets.WidgetModel.extend({
-    defaults: _.extend(widgets.WidgetModel.prototype.defaults(), {
-        _model_name: 'NodeModel',
-        _view_name: 'NodeView',
-        _model_module: 'ipytree',
-        _view_module: 'ipytree',
-        name: 'Node',
-        opened: true,
-        disabled: false,
-        selected: false,
-        show_icon: true,
-        icon: 'folder',
-        icon_image: '',
-        icon_style: 'default',
-        open_icon: 'plus',
-        open_icon_style: 'default',
-        close_icon: 'minus',
-        close_icon_style: 'default',
-        nodes: [],
-        _id: '',
-    }),
+export class NodeModel extends widgets.WidgetModel {
+    defaults() {
+        return {
+            ...super.defaults(),
+            _model_name: 'NodeModel',
+            _view_name: 'NodeView',
+            _model_module: 'ipytree',
+            _view_module: 'ipytree',
+            name: 'Node',
+            opened: true,
+            disabled: false,
+            selected: false,
+            show_icon: true,
+            icon: 'folder',
+            icon_image: '',
+            icon_style: 'default',
+            open_icon: 'plus',
+            open_icon_style: 'default',
+            close_icon: 'minus',
+            close_icon_style: 'default',
+            nodes: [],
+            _id: '',
+        };
+    }
 
-    initialize: function() {
-        NodeModel.__super__.initialize.apply(this, arguments);
+    initialize() {
+        super.initialize(arguments);
 
         nodesRegistry[this.get('_id')] = this;
     }
-}, {
-    serializers: _.extend({
-        nodes: { deserialize: widgets.unpack_models },
-    }, widgets.WidgetModel.serializers)
-});
+}
 
-var NodeView = widgets.WidgetView.extend({
-    initialize: function (parameters) {
-        NodeView.__super__.initialize.apply(this, arguments);
+NodeModel.serializers = {
+    ...widgets.WidgetModel.serializers,
+    nodes: { deserialize: widgets.unpack_models },
+};
+
+export class NodeView extends widgets.WidgetView {
+    initialize() {
+        super.initialize(arguments);
 
         this.parentModel = this.options.parentModel;
         this.treeView = this.options.treeView;
@@ -50,9 +54,9 @@ var NodeView = widgets.WidgetView.extend({
             this.tree = $(this.treeView.el).jstree(true);
             this.renderNode();
         });
-    },
+    }
 
-    renderNode: function() {
+    renderNode() {
         this.tree.create_node(
             this.parentModel.get('_id'),
             {
@@ -68,9 +72,9 @@ var NodeView = widgets.WidgetView.extend({
             'last',
             _.bind(this.onRendered, this)
         );
-    },
+    }
 
-    getIcon: function() {
+    getIcon() {
         if(!this.model.get('show_icon')) {
             return false;
         }
@@ -83,28 +87,28 @@ var NodeView = widgets.WidgetView.extend({
             icon = 'fa fa-' + icon + ' ipytree-style-' + this.model.get('icon_style');
         }
         return icon;
-    },
+    }
 
-    getOpenIcon: function() {
+    getOpenIcon() {
         var icon = this.model.get('open_icon');
         icon = 'fa fa-' + icon + ' ipytree-style-' + this.model.get('open_icon_style');
 
         return icon;
-    },
+    }
 
-    getCloseIcon: function() {
+    getCloseIcon() {
         var icon = this.model.get('close_icon');
         icon = 'fa fa-' + icon + ' ipytree-style-' + this.model.get('close_icon_style');
 
         return icon;
-    },
+    }
 
-    getOpenCloseIconElement: function() {
+    getOpenCloseIconElement() {
         return $(this.treeView.el).find('#' + this.model.get('_id'))
             .find('i.jstree-icon.jstree-ocl').first();
-    },
+    }
 
-    setOpenCloseIcon: function(recursive=false) {
+    setOpenCloseIcon(recursive=false) {
         var open_icon = this.getOpenIcon();
         var close_icon = this.getCloseIcon();
         var icon_element = this.getOpenCloseIconElement();
@@ -136,8 +140,9 @@ var NodeView = widgets.WidgetView.extend({
         } else {
             icon_element.removeClass(close_icon).addClass(open_icon);
         }
-    },
-    onRendered: function() {
+    }
+
+    onRendered() {
         this.nodeViews = new widgets.ViewList(this.addNodeModel, this.removeNodeView, this);
         this.nodeViews.update(this.model.get('nodes'));
         this.nodeViewList = [];
@@ -160,9 +165,9 @@ var NodeView = widgets.WidgetView.extend({
         // Needs to be called every time a new child is added
         // Else parent icon will not be shown after adding child
         this.parentModel.trigger('icons_update');
-    },
+    }
 
-    addNodeModel: function(nodeModel) {
+    addNodeModel(nodeModel) {
         return this.create_child_view(nodeModel, {
             treeView: this.treeView,
             parentModel: this.model
@@ -170,50 +175,50 @@ var NodeView = widgets.WidgetView.extend({
             this.nodeViewList.push(view);
             return view;
         });
-    },
+    }
 
-    removeNodeView: function(nodeView) {
+    removeNodeView(nodeView) {
         nodeView.remove();
-    },
+    }
 
-    handleNameChange: function() {
+    handleNameChange() {
         this.tree.rename_node(this.model.get('_id'), this.model.get('name'));
-    },
+    }
 
-    handleOpenedChange: function() {
+    handleOpenedChange() {
         this.setOpenCloseIcon(true);
         if(this.model.get('opened')) {
             this.tree.open_node(this.model.get('_id'));
         } else {
             this.tree.close_node(this.model.get('_id'));
         }
-    },
+    }
 
-    handleDisabledChange: function() {
+    handleDisabledChange() {
         if(this.model.get('disabled')) {
             this.tree.disable_node(this.model.get('_id'));
         } else {
             this.tree.enable_node(this.model.get('_id'));
         }
-    },
+    }
 
-    handleSelectedChange: function() {
+    handleSelectedChange() {
         if(this.model.get('selected')) {
             this.tree.select_node(this.model.get('_id'));
         } else {
             this.tree.deselect_node(this.model.get('_id'));
         }
-    },
+    }
 
-    handleIconChange: function() {
+    handleIconChange() {
         this.tree.set_icon(this.model.get('_id'), this.getIcon());
-    },
+    }
 
-    handleNodesChange: function() {
-        this.nodeViews.update(this.model.get('nodes')); 
-    },
+    handleNodesChange() {
+        this.nodeViews.update(this.model.get('nodes'));
+    }
 
-    remove: function() {
+    remove() {
         NodeView.__super__.remove.apply(this, arguments);
 
         this.nodeViewList.forEach((view) => {
@@ -224,30 +229,34 @@ var NodeView = widgets.WidgetView.extend({
         delete this.nodeView;
         this.stopListening(this.model);
     }
-});
+};
 
 
-var TreeModel = widgets.DOMWidgetModel.extend({
-    defaults: _.extend(widgets.DOMWidgetModel.prototype.defaults(), {
-        _model_name: 'TreeModel',
-        _view_name: 'TreeView',
-        _model_module: 'ipytree',
-        _view_module: 'ipytree',
-        nodes: [],
-        multiple_selection: true,
-        animation: 200,
-        selected_nodes: [],
-        _id: '#'
-    })
-}, {
-    serializers: _.extend({
-        nodes: { deserialize: widgets.unpack_models },
-        selected_nodes: { deserialize: widgets.unpack_models },
-    }, widgets.DOMWidgetModel.serializers)
-});
+export class TreeModel extends widgets.DOMWidgetModel {
+    defaults() {
+        return {
+            ...super.defaults(),
+            _model_name: 'TreeModel',
+            _view_name: 'TreeView',
+            _model_module: 'ipytree',
+            _view_module: 'ipytree',
+            nodes: [],
+            multiple_selection: true,
+            animation: 200,
+            selected_nodes: [],
+            _id: '#'
+        }
+    }
+}
 
-var TreeView = widgets.DOMWidgetView.extend({
-    render: function() {
+TreeModel.serializers = {
+    ...widgets.DOMWidgetModel.serializers,
+    nodes: { deserialize: widgets.unpack_models },
+    selected_nodes: { deserialize: widgets.unpack_models },
+};
+
+export class TreeView extends widgets.DOMWidgetView {
+    render() {
         this.waitTree = new Promise((resolve, reject) => {
             $(this.el).jstree({
                 'core': {
@@ -270,9 +279,9 @@ var TreeView = widgets.DOMWidgetView.extend({
                 resolve();
             });
         });
-    },
+    }
 
-    initTreeEventListeners: function() {
+    initTreeEventListeners() {
         $(this.el).bind(
             "select_node.jstree", (evt, data) => {
                 nodesRegistry[data.node.id].set('selected', true);
@@ -321,20 +330,20 @@ var TreeView = widgets.DOMWidgetView.extend({
                 this.model.save_changes();
             }
         );
-    },
+    }
 
-    addNodeModel: function(nodeModel) {
+    addNodeModel(nodeModel) {
         return this.create_child_view(nodeModel, {
             treeView: this,
             parentModel: this.model,
         });
-    },
+    }
 
-    removeNodeView: function(nodeView) {
+    removeNodeView(nodeView) {
         nodeView.remove();
-    },
+    }
 
-    handleNodesChange: function() {
+    handleNodesChange() {
         this.nodeViews.update(this.model.get('nodes'));
         // If top level nodes are changed, icons disappear
         // So reload them for all visible nodes
@@ -343,16 +352,9 @@ var TreeView = widgets.DOMWidgetView.extend({
             views[view].setOpenCloseIcon(true);
           }
         });
-    },
+    }
 
-    remove: function() {
+    remove() {
         this.stopListening(this.model);
-    },
-});
-
-module.exports = {
-    NodeModel: NodeModel,
-    NodeView: NodeView,
-    TreeModel: TreeModel,
-    TreeView: TreeView,
-};
+    }
+}

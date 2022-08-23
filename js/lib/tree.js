@@ -219,7 +219,7 @@ export class NodeView extends widgets.WidgetView {
     }
 
     remove() {
-        NodeView.__super__.remove.apply(this, arguments);
+        super.remove();
 
         this.nodeViewList.forEach((view) => {
             view.remove();

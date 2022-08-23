@@ -24,7 +24,7 @@ jobs:
         channels: conda-forge
 
     - name: Mamba install dependencies
-      run: mamba install python=3.8 pip yarn jupyterlab=3 ipywidgets=7.6
+      run: mamba install python=3.8 pip yarn jupyterlab=3 ipywidgets nodejs=14
 
     - name: Install the ipytree Python package
       run: pip install .

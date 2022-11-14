@@ -303,12 +303,11 @@ export class TreeView extends widgets.DOMWidgetView {
             }
         ).bind(
             "deselect_all.jstree", (evt, data) => {
-                for(var id in nodesRegistry) {
-                    if(this.tree.get_node(id)) {
-                        nodesRegistry[id].set('selected', false);
-                        nodesRegistry[id].save_changes();
-                    }
-                }
+                var selected_nodes = this.model.get('selected_nodes');
+                selected_nodes.forEach((model) => {
+                    model.set('selected', false);
+                    model.save_changes();
+                });
             }
         ).bind(
             "after_open.jstree", (evt, data) => {

@@ -1,7 +1,6 @@
 from __future__ import print_function
 from setuptools import setup, find_packages
 import os
-from distutils import log
 
 from jupyter_packaging import (
     create_cmdclass, install_npm, ensure_targets,
@@ -12,10 +11,6 @@ name = 'ipytree'
 
 here = os.path.dirname(os.path.abspath(__file__))
 long_description = 'A Tree Widget using jsTree'
-
-log.set_verbosity(log.DEBUG)
-log.info('setup.py entered')
-log.info('$PATH=%s' % os.environ['PATH'])
 
 # Get ipytree version
 version = get_version(os.path.join(name, '_version.py'))

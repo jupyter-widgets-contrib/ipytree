@@ -9,3 +9,12 @@ def _jupyter_nbextension_paths():
         'dest': 'ipytree',
         'require': 'ipytree/extension'
     }]
+
+
+def _jupyter_labextension_paths():
+    return [
+        {
+            "src": "labextension",
+            "dest": "ipytree",
+        }
+    ]

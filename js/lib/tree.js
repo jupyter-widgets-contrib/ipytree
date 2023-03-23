@@ -253,7 +253,7 @@ TreeModel.serializers = {
     ...widgets.DOMWidgetModel.serializers,
     nodes: { deserialize: widgets.unpack_models },
     selected_nodes: {
-        /** @type {(model_ids: string[], manager: IWidgetManager) => WidgetModel[]} */
+        /** @type {(model_ids: string[], manager: IWidgetManager) => Promise<WidgetModel[]>} */
         deserialize: widgets.unpack_models,
         /** @type {(models: WidgetModel[]) => string[]} */
         serialize: (models) => models.map((model) => {

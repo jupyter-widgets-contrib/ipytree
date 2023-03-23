@@ -252,7 +252,14 @@ export class TreeModel extends widgets.DOMWidgetModel {
 TreeModel.serializers = {
     ...widgets.DOMWidgetModel.serializers,
     nodes: { deserialize: widgets.unpack_models },
-    selected_nodes: { deserialize: widgets.unpack_models },
+    selected_nodes: {
+        /** @type {(model_ids: string[], manager: IWidgetManager) => Promise<WidgetModel[]>} */
+        deserialize: widgets.unpack_models,
+        /** @type {(models: WidgetModel[]) => string[]} */
+        serialize: (models) => models.map((model) => {
+            return `IPY_MODEL_${model.model_id}`;
+        })
+    },
 };
 
 export class TreeView extends widgets.DOMWidgetView {

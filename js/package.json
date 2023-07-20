@@ -7,7 +7,7 @@
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/QuantStack/ipytree.git"
+    "url": "https://github.com/jupyter-widgets-contrib/ipytree.git"
   },
   "keywords": [
     "jupyter",

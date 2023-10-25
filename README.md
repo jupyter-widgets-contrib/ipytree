@@ -36,6 +36,8 @@ For a development installation (requires yarn and JupyterLab 3),
 ```
 $ git clone https://github.com/QuantStack/ipytree.git
 $ cd ipytree
+$ pip install jupyter
+$ pip install "jupyterlab>=3.0.0,<4.0.0"
 $ pip install -e .
 $ jupyter nbextension install --py --symlink --sys-prefix ipytree
 $ jupyter nbextension enable --py --sys-prefix ipytree

@@ -183,6 +183,7 @@ export class NodeView extends widgets.WidgetView {
 
     handleNameChange() {
         this.tree.rename_node(this.model.get('_id'), this.model.get('name'));
+        this.setOpenCloseIcon(false);
     }
 
     handleOpenedChange() {

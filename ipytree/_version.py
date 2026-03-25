@@ -1,4 +1,12 @@
-version_info = (0, 2, 2)
-__version__ = '%s.%s.%s'%(version_info[0], version_info[1], version_info[2])
+try:
+    from importlib.metadata import version, PackageNotFoundError
 
-module_version = "^0.2"
+    try:
+        __version__ = version("ipytree")
+    except PackageNotFoundError:
+        __version__ = "0.0.0"
+except ImportError:
+    __version__ = "0.0.0"
+
+version_info = tuple(int(x) for x in __version__.split(".")[:3])
+module_version = "^" + ".".join(__version__.split(".")[:2])

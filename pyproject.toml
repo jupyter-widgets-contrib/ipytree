@@ -1,3 +1,72 @@
 [build-system]
-requires = ["jupyter_packaging~=0.7.0", "jupyterlab==3.*", "setuptools>=40.8.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = [
+    "hatchling>=1.21.1",
+    "jupyterlab>=4.0.0,<5",
+    "hatch-jupyter-builder>=0.9.1",
+    "hatch-nodejs-version>=0.3.2",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "ipytree"
+description = "A Tree Widget using jsTree"
+license = "MIT"
+requires-python = ">=3.8"
+authors = [
+    { name = "Martin Renou", email = "martin.renou@gmail.com" },
+]
+keywords = ["ipython", "jupyter", "widgets"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: IPython",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Multimedia :: Graphics",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "ipywidgets>=7.5.0,<9",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/jupyter-widgets-contrib/ipytree"
+
+[tool.hatch.version]
+source = "nodejs"
+path = "js/package.json"
+
+[tool.hatch.build.targets.sdist]
+include = ["/ipytree", "/js", "/*.json"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"ipytree/nbextension" = "share/jupyter/nbextensions/ipytree"
+"ipytree/labextension" = "share/jupyter/labextensions/ipytree"
+"ipytree.json" = "etc/jupyter/nbconfig/notebook.d/ipytree.json"
+
+[tool.hatch.build.hooks.jupyter-builder]
+dependencies = ["hatch-jupyter-builder>=0.9.1"]
+build-function = "hatch_jupyter_builder.npm_builder"
+ensured-targets = [
+    "ipytree/nbextension/index.js",
+    "ipytree/labextension/package.json",
+]
+skip-if-exists = [
+    "ipytree/nbextension/index.js",
+    "ipytree/labextension/package.json",
+]
+
+[tool.hatch.build.hooks.jupyter-builder.build-kwargs]
+path = "js"
+build_cmd = "build"
+npm = ["yarn"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error::DeprecationWarning",
+]

@@ -7,7 +7,7 @@
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/QuantStack/ipytree.git"
+    "url": "https://github.com/jupyter-widgets-contrib/ipytree.git"
   },
   "keywords": [
     "jupyter",
@@ -27,7 +27,7 @@
     "clean": "rimraf dist/ && rimraf ../ipytree/labextension/ && rimraf ../ipytree/nbextension"
   },
   "devDependencies": {
-    "@jupyterlab/builder": "^3.4.5",
+    "@jupyterlab/builder": "^4.0.0",
     "css-loader": "^6.7.1",
     "rimraf": "^3.0.2",
     "style-loader": "^3.3.1",

@@ -15,16 +15,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Setup conda
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@v3
       with:
         mamba-version: "*"
         channels: conda-forge
 
     - name: Mamba install dependencies
-      run: mamba install python=3.8 pip yarn jupyterlab=3 ipywidgets nodejs=14
+      run: mamba install python=3.10 pip yarn jupyterlab=4 ipywidgets nodejs=18
 
     - name: Install the ipytree Python package
       run: pip install .
@@ -37,10 +37,12 @@ jobs:
         test -d $CONDA_PREFIX/share/jupyter/labextensions/ipytree
         test -f $CONDA_PREFIX/share/jupyter/labextensions/ipytree/package.json
 
-    - name: Check JupyterLab and Jupyter Notebook extensions
+    - name: Check JupyterLab extension
       run: |
-        jupyter nbextension list 2>&1 | grep -ie "ipytree/extension.*enabled" -
         jupyter labextension list 2>&1 | grep -ie "ipytree.*enabled.*ok" -
+
+    - name: Run tests
+      run: python -m pytest tests/ -v
 
     - name: Browser check
       run: python -m jupyterlab.browser_check
